@@ -132,7 +132,7 @@ class Notification extends Model
             $userId,
             'assignment',
             "New {$entityName} Assignment",
-            "You have been assigned to {$entityName}: {$entity->name ?? $entity->title ?? $entity->id}",
+            "You have been assigned to {$entityName}: " . ($entity->name ?? $entity->title ?? $entity->id),
             $entity,
             $assignedByUserId,
             [
@@ -157,7 +157,7 @@ class Notification extends Model
             $userId,
             'deadline',
             "{$entityName} Deadline Approaching",
-            "Deadline for {$entityName} '{$entity->name ?? $entity->title}' is approaching: {$deadline}",
+            "Deadline for {$entityName} '" . ($entity->name ?? $entity->title) . "' is approaching: {$deadline}",
             $entity,
             null,
             [

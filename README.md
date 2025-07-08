@@ -6,6 +6,8 @@ A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS
 
 ## Features
 
+### Phase 1 - Core CRM Functionality
+
 ### 🏢 **Company Management**
 - Complete company profiles with contact information
 - Industry classification and employee count tracking
@@ -59,48 +61,48 @@ A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS
 - Validation rules and required fields
 - Order customization
 
-## Phase 2 Features
+## Phase 2 - Advanced CRM Features
 
 ### 📧 **Email Integration**
-- Send and receive emails directly from the CRM
-- Email templates with variable substitution
-- Email tracking (opens, clicks, bounces)
-- Automatic email-to-entity linking
-- Support for multiple email providers (SMTP, SendGrid, Postmark, etc.)
-- Email history and thread management
+- **Send & Receive**: Direct email integration with CRM entities
+- **Smart Templates**: Dynamic email templates with variable substitution
+- **Email Tracking**: Monitor opens, clicks, bounces, and delivery status
+- **Multi-Provider**: Support for SMTP, SendGrid, Postmark, AWS SES
+- **Thread Management**: Complete email history and conversation tracking
+- **Auto-Linking**: Automatic email-to-contact/deal association
 
 ### 📊 **Advanced Reporting & Analytics**
-- Comprehensive dashboard with real-time metrics
-- Custom report builder with advanced filtering
-- Revenue trends and pipeline analytics
-- Performance metrics and KPI tracking
-- Scheduled reports via email
-- Export reports in multiple formats
-- Activity logging and audit trails
+- **Real-time Dashboard**: Live metrics and KPI monitoring
+- **Custom Report Builder**: Drag-and-drop report creation with advanced filtering
+- **Revenue Analytics**: Pipeline analysis, win rates, and forecasting
+- **Activity Insights**: Comprehensive audit trails and user activity tracking
+- **Scheduled Reports**: Automated report generation and email delivery
+- **Export Options**: Multiple format support (PDF, Excel, CSV)
+- **Performance Metrics**: Team performance and individual productivity tracking
 
 ### 👥 **Team Collaboration**
-- Team management with role-based permissions
-- Real-time notifications and mentions
-- Commenting system for all entities
-- Activity feeds and collaboration history
-- Assignment tracking and delegation
-- Internal vs. customer-facing communications
+- **Team Management**: Organize users into teams with role-based permissions
+- **Real-time Notifications**: Instant alerts for assignments, mentions, and deadlines
+- **Smart Comments**: Entity-based discussions with @mentions and threading
+- **Activity Feeds**: Collaborative timeline showing all team interactions
+- **Permission Control**: Granular access control for teams and individuals
+- **Internal Communication**: Separate internal notes from customer-facing content
 
 ### 📁 **Import/Export Functionality**
-- Bulk import from CSV/Excel files
-- Column mapping and data validation
-- Import progress tracking with error handling
-- Export data in multiple formats
-- Template downloads for proper formatting
-- Scheduled and automated exports
+- **Bulk Import**: CSV/Excel import with intelligent field mapping
+- **Data Validation**: Advanced validation with detailed error reporting
+- **Progress Tracking**: Real-time import status with success/failure metrics
+- **Template Downloads**: Pre-configured templates for easy data preparation
+- **Error Recovery**: Detailed error logs with suggestions for data fixes
+- **Scheduled Exports**: Automated data exports for backup and integration
 
 ### 🔍 **Advanced Search & Filtering**
-- Global search across all CRM entities
-- Advanced filtering with multiple criteria
-- Saved searches for quick access
-- Search result highlighting and relevance
-- Filter by custom fields and relationships
-- Quick filters for common searches
+- **Global Search**: Lightning-fast search across all CRM entities
+- **Smart Filters**: Complex multi-criteria filtering with logical operators
+- **Saved Searches**: Store frequently used search configurations
+- **Quick Filters**: One-click filters for common search patterns
+- **Search Highlighting**: Visual emphasis on search matches
+- **Cross-Entity Search**: Find related data across companies, contacts, and deals
 
 ## Technology Stack
 
@@ -178,6 +180,49 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
+### Phase 2 Configuration
+
+#### Email Integration Setup
+```env
+# Email Configuration
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.your-provider.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@domain.com
+MAIL_PASSWORD=your-app-password
+MAIL_FROM_ADDRESS=crm@your-company.com
+MAIL_FROM_NAME="Your Company CRM"
+
+# For SendGrid
+MAIL_MAILER=sendgrid
+SENDGRID_API_KEY=your-sendgrid-api-key
+
+# For Postmark
+MAIL_MAILER=postmark
+POSTMARK_TOKEN=your-postmark-token
+```
+
+#### Queue Configuration (for Import/Export)
+```env
+QUEUE_CONNECTION=database
+# Or for Redis
+QUEUE_CONNECTION=redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
+
+#### File Storage (for imports/exports)
+```env
+FILESYSTEM_DISK=local
+# Or for S3
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=your-bucket-name
+```
+
 ## Architecture
 
 ### Database Schema
@@ -203,14 +248,58 @@ Built with extensibility in mind:
 
 ## API Documentation
 
+### Core API Endpoints
+
 RESTful API endpoints for all major entities:
+
+**Core Entities:**
 - Companies (`/api/companies`)
 - Contacts (`/api/contacts`)
 - Deals (`/api/deals`)
 - Tasks (`/api/tasks`)
 - Notes (`/api/notes`)
+- Tags (`/api/tags`)
 
-GraphQL endpoint available at `/graphql` for complex queries.
+**Phase 2 Endpoints:**
+- Emails (`/api/emails`)
+- Email Templates (`/api/email-templates`)
+- Teams (`/api/teams`)
+- Reports (`/api/reports`)
+- Notifications (`/api/notifications`)
+- Import Jobs (`/api/import-jobs`)
+- Saved Searches (`/api/saved-searches`)
+
+### Advanced Features API
+
+**Email Integration:**
+```
+POST /api/emails/send
+GET /api/emails/{id}/tracking
+POST /api/email-templates
+```
+
+**Reporting & Analytics:**
+```
+POST /api/reports/generate
+GET /api/analytics/dashboard
+GET /api/analytics/revenue-trends
+```
+
+**Team Collaboration:**
+```
+POST /api/teams/{id}/members
+POST /api/comments
+GET /api/notifications/unread
+```
+
+**Import/Export:**
+```
+POST /api/import/contacts
+GET /api/import/{id}/status
+POST /api/export/deals
+```
+
+GraphQL endpoint available at `/graphql` for complex queries and real-time subscriptions.
 
 ## Contributing
 

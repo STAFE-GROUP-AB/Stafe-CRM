@@ -7,6 +7,10 @@ use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Task;
+use App\Models\Email;
+use App\Models\Team;
+use App\Models\ImportJob;
+use App\Models\ActivityLog;
 
 class Dashboard extends Component
 {
@@ -21,6 +25,11 @@ class Dashboard extends Component
             'overdue_tasks' => Task::where('due_date', '<', now())
                                 ->where('status', '!=', 'completed')
                                 ->count(),
+            // Phase 2 Analytics
+            'emails_sent' => Email::where('direction', 'outbound')->count(),
+            'emails_opened' => Email::whereNotNull('opened_at')->count(),
+            'active_teams' => Team::where('is_active', true)->count(),
+            'recent_imports' => ImportJob::where('created_at', '>=', now()->subDays(7))->count(),
         ];
 
         $recent_deals = Deal::with(['company', 'contact', 'pipelineStage'])
@@ -36,10 +45,38 @@ class Dashboard extends Component
             ->limit(5)
             ->get();
 
+        // Phase 2 Data
+        $recent_emails = Email::with(['emailable', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        $recent_activity = ActivityLog::with(['loggable', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Analytics for charts
+        $deal_analytics = Deal::selectRaw('pipeline_stage_id, COUNT(*) as count, SUM(value) as total_value')
+            ->with('pipelineStage')
+            ->groupBy('pipeline_stage_id')
+            ->get();
+
+        $revenue_trends = Deal::selectRaw('DATE(created_at) as date, SUM(value) as revenue')
+            ->where('status', 'won')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
         return view('livewire.dashboard', [
             'stats' => $stats,
             'recent_deals' => $recent_deals,
             'upcoming_tasks' => $upcoming_tasks,
+            'recent_emails' => $recent_emails,
+            'recent_activity' => $recent_activity,
+            'deal_analytics' => $deal_analytics,
+            'revenue_trends' => $revenue_trends,
         ])->layout('layouts.app');
     }
 }

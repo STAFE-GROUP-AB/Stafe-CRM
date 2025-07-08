@@ -2,12 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Dashboard;
+use App\Livewire\SystemSettings;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
+Route::get('/settings', SystemSettings::class)->name('settings');
 
 // Placeholder routes for navigation (will be implemented with Livewire components)
 Route::get('/contacts', function () {

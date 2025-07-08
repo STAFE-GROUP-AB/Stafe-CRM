@@ -78,6 +78,21 @@ class Contact extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
+    public function emails(): MorphMany
+    {
+        return $this->morphMany(Email::class, 'emailable');
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function activityLogs(): MorphMany
+    {
+        return $this->morphMany(ActivityLog::class, 'loggable');
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim($this->first_name . ' ' . $this->last_name);

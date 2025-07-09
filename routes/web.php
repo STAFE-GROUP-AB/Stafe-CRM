@@ -5,6 +5,7 @@ use App\Livewire\Dashboard;
 use App\Livewire\SystemSettings;
 use App\Livewire\AiConfiguration;
 use App\Livewire\LeadScoringDashboard;
+use App\Http\Controllers\AiDemoController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -16,6 +17,10 @@ Route::get('/settings', SystemSettings::class)->name('settings');
 // AI Features Routes
 Route::get('/ai/configuration', AiConfiguration::class)->name('ai.configuration');
 Route::get('/ai/lead-scoring', LeadScoringDashboard::class)->name('ai.lead-scoring');
+
+// AI Demo Routes (for demonstration without authentication)
+Route::get('/ai/demo/configuration', [AiDemoController::class, 'aiConfiguration'])->name('ai.demo.configuration');
+Route::get('/ai/demo/lead-scoring', [AiDemoController::class, 'leadScoring'])->name('ai.demo.lead-scoring');
 
 // Placeholder routes for navigation (will be implemented with Livewire components)
 Route::get('/contacts', function () {

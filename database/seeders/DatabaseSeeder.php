@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PipelineStageSeeder::class,
             EmailTemplateSeeder::class,
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            IntegrationSeeder::class,
         ]);
     }
 }

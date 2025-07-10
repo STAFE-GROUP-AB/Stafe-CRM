@@ -13,7 +13,8 @@
         "livewire/livewire": "*",
         "twilio/sdk": "^8.0",
         "openai-php/client": "^0.10.0",
-        "spatie/laravel-webhook-client": "^3.3"
+        "spatie/laravel-webhook-client": "^3.3",
+        "intervention/image": "^3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

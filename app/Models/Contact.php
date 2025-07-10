@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasGdprConsent;
+use App\Traits\HasEncryptedFields;
+use App\Traits\HasAuditLog;
 
 class Contact extends Model
 {
-    use HasFactory;
+    use HasFactory, HasGdprConsent, HasEncryptedFields, HasAuditLog;
 
     protected $fillable = [
         'first_name',
@@ -130,5 +133,43 @@ class Contact extends Model
         }
         
         return number_format($this->lifetime_value, 2) . ' USD';
+    }
+
+    // GDPR-specific methods
+    public function getGdprExportableRelations(): array
+    {
+        return [
+            'deals',
+            'tasks',
+            'notes',
+            'customFields',
+            'emails',
+            'communications',
+        ];
+    }
+
+    public function getGdprAnonymizableFields(): array
+    {
+        return [
+            'first_name',
+            'last_name', 
+            'email',
+            'phone',
+            'personal_email',
+            'mobile_phone',
+            'linkedin_url',
+            'bio',
+            'birthday',
+        ];
+    }
+
+    protected function getSensitiveAuditFields(): array
+    {
+        return [
+            'ssn',
+            'tax_id',
+            'personal_email', // If different from business email
+            'personal_phone',
+        ];
     }
 }

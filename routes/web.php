@@ -11,6 +11,7 @@ use App\Http\Controllers\AiDemoController;
 use App\Http\Controllers\TwilioWebhookController;
 use App\Http\Controllers\ChatWidgetController;
 use App\Http\Controllers\RevenueIntelligenceController;
+use App\Http\Controllers\Analytics\AnalyticsController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -129,6 +130,25 @@ Route::prefix('customer-experience')->name('customer-experience.')->group(functi
     Route::get('/health-scores', \App\Livewire\CustomerHealthDashboard::class)->name('health');
     Route::get('/journey-mapping', \App\Livewire\JourneyMappingDashboard::class)->name('journeys');
     Route::get('/loyalty-programs', \App\Livewire\LoyaltyProgramManager::class)->name('loyalty');
+});
+
+// Visual Intelligence & Analytics Routes (Phase 4.7)
+Route::prefix('analytics')->name('analytics.')->group(function () {
+    Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+    Route::get('/dashboards', [AnalyticsController::class, 'dashboards'])->name('dashboards');
+    Route::get('/heat-maps', [AnalyticsController::class, 'heatMaps'])->name('heat-maps');
+    Route::get('/charts', [AnalyticsController::class, 'charts'])->name('charts');
+    Route::get('/relationships', [AnalyticsController::class, 'relationships'])->name('relationships');
+    Route::get('/pipeline', [AnalyticsController::class, 'pipeline'])->name('pipeline');
+    Route::get('/forecasting', [AnalyticsController::class, 'forecasting'])->name('forecasting');
+    
+    // API endpoints for data retrieval
+    Route::get('/api/dashboards/{dashboard}/data', [AnalyticsController::class, 'getDashboardData'])->name('api.dashboard-data');
+    Route::get('/api/charts/{chart}/data', [AnalyticsController::class, 'getChartData'])->name('api.chart-data');
+    Route::get('/api/heat-maps/{heatMap}/data', [AnalyticsController::class, 'getHeatMapData'])->name('api.heatmap-data');
+    Route::get('/api/relationships/{network}/data', [AnalyticsController::class, 'getRelationshipNetworkData'])->name('api.relationship-data');
+    Route::get('/api/pipeline/{visualization}/data', [AnalyticsController::class, 'getPipelineVisualizationData'])->name('api.pipeline-data');
+    Route::get('/api/forecasting/{simulation}/data', [AnalyticsController::class, 'getForecastSimulationData'])->name('api.forecast-data');
 });
 
 // Twilio Webhook Routes (public, no auth required)

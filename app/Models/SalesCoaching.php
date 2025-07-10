@@ -35,7 +35,7 @@ class SalesCoaching extends Model
         'performance_metrics' => 'array',
         'action_items' => 'array',
         'suggested_resources' => 'array',
-        'coaching_score' => 'decimal:4',
+        'coaching_score' => 'float',
         'follow_up_date' => 'date',
         'last_generated_at' => 'datetime',
     ];

@@ -32,15 +32,15 @@ class TerritoryPerformance extends Model
     ];
 
     protected $casts = [
-        'performance_score' => 'decimal:4',
-        'revenue_target' => 'decimal:10,2',
-        'revenue_actual' => 'decimal:10,2',
-        'revenue_percentage' => 'decimal:5,2',
-        'activity_score' => 'decimal:4',
+        'performance_score' => 'float',
+        'revenue_target' => 'float',
+        'revenue_actual' => 'float',
+        'revenue_percentage' => 'float',
+        'activity_score' => 'float',
         'optimization_recommendations' => 'array',
         'market_potential' => 'array',
-        'competition_density' => 'decimal:4',
-        'territory_balance_score' => 'decimal:4',
+        'competition_density' => 'float',
+        'territory_balance_score' => 'float',
         'period_start' => 'date',
         'period_end' => 'date',
         'last_calculated_at' => 'datetime',

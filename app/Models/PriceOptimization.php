@@ -29,8 +29,8 @@ class PriceOptimization extends Model
     ];
 
     protected $casts = [
-        'suggested_price' => 'decimal:10,2',
-        'confidence_score' => 'decimal:4',
+        'suggested_price' => 'float',
+        'confidence_score' => 'float',
         'price_factors' => 'array',
         'market_analysis' => 'array',
         'competitor_pricing' => 'array',

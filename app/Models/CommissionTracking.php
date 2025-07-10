@@ -33,10 +33,10 @@ class CommissionTracking extends Model
     ];
 
     protected $casts = [
-        'commission_amount' => 'decimal:10,2',
-        'commission_rate' => 'decimal:5,4',
-        'base_amount' => 'decimal:10,2',
-        'bonus_amount' => 'decimal:10,2',
+        'commission_amount' => 'float',
+        'commission_rate' => 'float',
+        'base_amount' => 'float',
+        'bonus_amount' => 'float',
         'calculation_rules' => 'array',
         'payment_date' => 'date',
         'payment_period_start' => 'date',

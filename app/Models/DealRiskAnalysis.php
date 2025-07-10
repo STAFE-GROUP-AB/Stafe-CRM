@@ -27,8 +27,8 @@ class DealRiskAnalysis extends Model
     protected $casts = [
         'risk_factors' => 'array',
         'intervention_recommendations' => 'array',
-        'probability_to_close' => 'decimal:4',
-        'confidence_score' => 'decimal:4',
+        'probability_to_close' => 'float',
+        'confidence_score' => 'float',
         'predicted_close_date' => 'date',
         'last_analyzed_at' => 'datetime',
     ];

@@ -26,7 +26,7 @@ class LeadScore extends Model
     protected $casts = [
         'factors' => 'array',
         'explanations' => 'array',
-        'probability' => 'decimal:4',
+        'probability' => 'float',
         'raw_predictions' => 'array',
         'last_calculated_at' => 'datetime',
     ];

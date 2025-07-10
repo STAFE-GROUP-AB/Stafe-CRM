@@ -10,6 +10,8 @@ class CompetitiveIntelligence extends Model
 {
     use HasFactory;
 
+    protected $table = 'competitive_intelligence';
+
     protected $fillable = [
         'deal_id',
         'competitor_name',
@@ -32,8 +34,8 @@ class CompetitiveIntelligence extends Model
         'battle_card_recommendations' => 'array',
         'pricing_comparison' => 'array',
         'feature_comparison' => 'array',
-        'win_loss_probability' => 'decimal:4',
-        'confidence_score' => 'decimal:4',
+        'win_loss_probability' => 'float',
+        'confidence_score' => 'float',
         'last_updated_at' => 'datetime',
     ];
 

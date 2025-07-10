@@ -90,7 +90,7 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $riskAnalysis->risk_score }}/100</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ round(($riskAnalysis->probability_to_close ?? 0) * 100) }}%</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($riskAnalysis->probability_to_close * 100, 0) }}%</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             <button class="text-indigo-600 hover:text-indigo-900">View Interventions</button>
                                         </td>
@@ -125,7 +125,7 @@
                                             <div class="text-sm text-gray-500">${{ number_format($threat->deal->value ?? 0) }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $threat->competitor_name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ round(($threat->win_loss_probability ?? 0) * 100) }}%</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($threat->win_loss_probability * 100, 0) }}%</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
                                                 @if($threat->getThreatLevel() === 'critical') bg-red-100 text-red-800
@@ -159,9 +159,9 @@
                                         <div class="text-xs text-gray-500">{{ $territory->territory_name }}</div>
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        <div class="text-sm text-gray-900">{{ round($territory->revenue_percentage, 1) }}%</div>
+                                        <div class="text-sm text-gray-900">{{ number_format($territory->revenue_percentage, 1) }}%</div>
                                         <div class="w-16 bg-gray-200 rounded-full h-2">
-                                            <div class="bg-{{ $territory->getPerformanceColor() }}-600 h-2 rounded-full" style="width: {{ min(100, $territory->revenue_percentage) }}%"></div>
+                                            <div class="bg-{{ $territory->getPerformanceColor() }}-600 h-2 rounded-full" style="width: {{ min(100, (float)$territory->revenue_percentage) }}%"></div>
                                         </div>
                                     </div>
                                 </div>

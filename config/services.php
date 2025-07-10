@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'twilio' => [
+        'account_sid' => env('TWILIO_ACCOUNT_SID'),
+        'auth_token' => env('TWILIO_AUTH_TOKEN'),
+        'phone_number' => env('TWILIO_PHONE_NUMBER'),
+        'whatsapp_number' => env('TWILIO_WHATSAPP_NUMBER'),
+        'webhook_secret' => env('TWILIO_WEBHOOK_SECRET'),
+    ],
+
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'organization' => env('OPENAI_ORGANIZATION'),
+    ],
+
 ];

@@ -98,6 +98,21 @@ class Contact extends Model
         return $this->hasOne(LeadScore::class);
     }
 
+    public function communications(): MorphMany
+    {
+        return $this->morphMany(Communication::class, 'communicable');
+    }
+
+    public function chatSessions(): HasMany
+    {
+        return $this->hasMany(ChatSession::class);
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->getFullNameAttribute();
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim($this->first_name . ' ' . $this->last_name);

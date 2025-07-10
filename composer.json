@@ -10,7 +10,10 @@
         "echolabsdev/prism": "*",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "livewire/livewire": "*"
+        "livewire/livewire": "*",
+        "twilio/sdk": "^8.0",
+        "openai-php/client": "^0.10.0",
+        "spatie/laravel-webhook-client": "^3.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

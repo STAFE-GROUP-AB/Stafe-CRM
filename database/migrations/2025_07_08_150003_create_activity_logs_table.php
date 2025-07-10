@@ -25,7 +25,6 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->timestamps();
             
-            $table->index(['loggable_type', 'loggable_id']);
             $table->index(['action', 'created_at']);
             $table->index('user_id');
         });

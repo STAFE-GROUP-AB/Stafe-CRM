@@ -24,7 +24,6 @@ return new class extends Migration
             $table->foreignId('parent_id')->nullable()->constrained('comments')->onDelete('cascade'); // For threaded comments
             $table->timestamps();
             
-            $table->index(['commentable_type', 'commentable_id']);
             $table->index('user_id');
         });
     }

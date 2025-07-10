@@ -120,6 +120,17 @@ Route::prefix('sales-enablement')->name('sales-enablement.')->group(function () 
     Route::post('/playbooks/{execution}/complete-step', [SalesEnablementController::class, 'completePlaybookStep'])->name('playbook-step.complete');
 });
 
+// Customer Experience Platform Routes
+Route::prefix('customer-experience')->name('customer-experience.')->group(function () {
+    Route::get('/dashboard', \App\Livewire\CustomerExperienceDashboard::class)->name('dashboard');
+    Route::get('/tickets', \App\Livewire\CustomerPortal::class)->name('tickets');
+    Route::get('/knowledge-base', \App\Livewire\KnowledgeBaseManager::class)->name('knowledge-base');
+    Route::get('/surveys', \App\Livewire\SurveyManager::class)->name('surveys');
+    Route::get('/health-scores', \App\Livewire\CustomerHealthDashboard::class)->name('health');
+    Route::get('/journey-mapping', \App\Livewire\JourneyMappingDashboard::class)->name('journeys');
+    Route::get('/loyalty-programs', \App\Livewire\LoyaltyProgramManager::class)->name('loyalty');
+});
+
 // Twilio Webhook Routes (public, no auth required)
 Route::prefix('webhooks/twilio')->name('twilio.')->group(function () {
     Route::post('/voice/incoming', [TwilioWebhookController::class, 'handleIncomingCall'])->name('call.incoming');

@@ -5,7 +5,11 @@ use App\Livewire\Dashboard;
 use App\Livewire\SystemSettings;
 use App\Livewire\AiConfiguration;
 use App\Livewire\LeadScoringDashboard;
+use App\Livewire\CommunicationHub;
+use App\Livewire\LiveChat;
 use App\Http\Controllers\AiDemoController;
+use App\Http\Controllers\TwilioWebhookController;
+use App\Http\Controllers\ChatWidgetController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -55,3 +59,23 @@ Route::get('/deals/create', function () {
 Route::get('/tasks/create', function () {
     return view('tasks.create');
 })->name('tasks.create');
+
+// Communication Hub Routes
+Route::get('/communications', CommunicationHub::class)->name('communications.index');
+Route::get('/communications/chat/{sessionId?}', LiveChat::class)->name('communications.chat');
+
+// Chat Widget Routes (public)
+Route::get('/chat/widget', [ChatWidgetController::class, 'widget'])->name('chat.widget');
+Route::get('/chat/embed.js', [ChatWidgetController::class, 'embedScript'])->name('chat.embed-script');
+
+// Twilio Webhook Routes (public, no auth required)
+Route::prefix('webhooks/twilio')->name('twilio.')->group(function () {
+    Route::post('/voice/incoming', [TwilioWebhookController::class, 'handleIncomingCall'])->name('call.incoming');
+    Route::post('/voice/status', [TwilioWebhookController::class, 'handleCallStatus'])->name('call.status');
+    Route::post('/voice/twiml', [TwilioWebhookController::class, 'generateCallTwiml'])->name('call.twiml');
+    Route::post('/sms/incoming', [TwilioWebhookController::class, 'handleIncomingSms'])->name('sms.incoming');
+    Route::post('/sms/status', [TwilioWebhookController::class, 'handleSmsStatus'])->name('sms.status');
+    Route::post('/whatsapp/incoming', [TwilioWebhookController::class, 'handleIncomingWhatsapp'])->name('whatsapp.incoming');
+    Route::post('/whatsapp/status', [TwilioWebhookController::class, 'handleWhatsappStatus'])->name('whatsapp.status');
+    Route::post('/recording/status', [TwilioWebhookController::class, 'handleRecordingComplete'])->name('recording.status');
+});

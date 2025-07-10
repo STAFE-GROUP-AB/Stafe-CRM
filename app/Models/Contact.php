@@ -93,6 +93,11 @@ class Contact extends Model
         return $this->morphMany(ActivityLog::class, 'loggable');
     }
 
+    public function leadScore(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(LeadScore::class);
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim($this->first_name . ' ' . $this->last_name);

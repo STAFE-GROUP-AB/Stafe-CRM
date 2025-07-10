@@ -40,7 +40,6 @@ return new class extends Migration
             $table->timestamps();
             
             $table->index(['direction', 'status']);
-            $table->index(['emailable_type', 'emailable_id']);
         });
     }
 

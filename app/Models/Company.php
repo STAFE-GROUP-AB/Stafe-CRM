@@ -41,6 +41,17 @@ class Company extends Model
         'annual_revenue' => 'decimal:2',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($company) {
+            if (empty($company->slug)) {
+                $company->slug = \Illuminate\Support\Str::slug($company->name);
+            }
+        });
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');

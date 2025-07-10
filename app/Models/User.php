@@ -305,4 +305,56 @@ class User extends Authenticatable
 
         return $tenantUser?->hasPermission($permission) ?? false;
     }
+
+    // Phase 4.4 Sales Enablement Relationships
+
+    public function quotes(): HasMany
+    {
+        return $this->hasMany(Quote::class, 'created_by');
+    }
+
+    public function salesContent(): HasMany
+    {
+        return $this->hasMany(SalesContent::class, 'created_by');
+    }
+
+    public function battleCards(): HasMany
+    {
+        return $this->hasMany(BattleCard::class, 'created_by');
+    }
+
+    public function playbooks(): HasMany
+    {
+        return $this->hasMany(SalesPlaybook::class, 'created_by');
+    }
+
+    public function playbookExecutions(): HasMany
+    {
+        return $this->hasMany(PlaybookExecution::class);
+    }
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(UserAchievement::class);
+    }
+
+    public function points(): HasOne
+    {
+        return $this->hasOne(UserPoint::class);
+    }
+
+    public function communications(): HasMany
+    {
+        return $this->hasMany(Communication::class);
+    }
+
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class, 'owner_id');
+    }
+
+    public function contentUsageAnalytics(): HasMany
+    {
+        return $this->hasMany(ContentUsageAnalytic::class);
+    }
 }

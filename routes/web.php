@@ -97,6 +97,29 @@ Route::get('/communications/chat/{sessionId?}', LiveChat::class)->name('communic
 Route::get('/chat/widget', [ChatWidgetController::class, 'widget'])->name('chat.widget');
 Route::get('/chat/embed.js', [ChatWidgetController::class, 'embedScript'])->name('chat.embed-script');
 
+// Sales Enablement Suite Routes
+Route::prefix('sales-enablement')->name('sales-enablement.')->group(function () {
+    Route::get('/quotes', \App\Livewire\QuoteBuilder::class)->name('quotes');
+    Route::get('/content-library', \App\Livewire\SalesContentLibrary::class)->name('content-library');
+    Route::get('/battle-cards', \App\Livewire\BattleCardsManager::class)->name('battle-cards');
+    Route::get('/playbooks', \App\Livewire\SalesPlaybooksManager::class)->name('playbooks');
+    Route::get('/gamification', \App\Livewire\GamificationDashboard::class)->name('gamification');
+    
+    // Quote-specific routes
+    Route::get('/quotes/{quote}/preview', [SalesEnablementController::class, 'previewQuote'])->name('quotes.preview');
+    Route::get('/quotes/{quote}/pdf', [SalesEnablementController::class, 'downloadQuotePdf'])->name('quotes.pdf');
+    Route::get('/quotes/{quote}/sign', [SalesEnablementController::class, 'signQuote'])->name('quotes.sign');
+    Route::post('/quotes/{quote}/signature', [SalesEnablementController::class, 'saveSignature'])->name('quotes.signature');
+    
+    // Content-specific routes
+    Route::get('/content/{content}/download', [SalesEnablementController::class, 'downloadContent'])->name('content.download');
+    Route::get('/content/{content}/preview', [SalesEnablementController::class, 'previewContent'])->name('content.preview');
+    
+    // Playbook execution
+    Route::get('/playbooks/{execution}/execute', [SalesEnablementController::class, 'executePlaybook'])->name('playbook-execution');
+    Route::post('/playbooks/{execution}/complete-step', [SalesEnablementController::class, 'completePlaybookStep'])->name('playbook-step.complete');
+});
+
 // Twilio Webhook Routes (public, no auth required)
 Route::prefix('webhooks/twilio')->name('twilio.')->group(function () {
     Route::post('/voice/incoming', [TwilioWebhookController::class, 'handleIncomingCall'])->name('call.incoming');

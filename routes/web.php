@@ -10,6 +10,7 @@ use App\Livewire\LiveChat;
 use App\Http\Controllers\AiDemoController;
 use App\Http\Controllers\TwilioWebhookController;
 use App\Http\Controllers\ChatWidgetController;
+use App\Http\Controllers\RevenueIntelligenceController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -21,6 +22,34 @@ Route::get('/settings', SystemSettings::class)->name('settings');
 // AI Features Routes
 Route::get('/ai/configuration', AiConfiguration::class)->name('ai.configuration');
 Route::get('/ai/lead-scoring', LeadScoringDashboard::class)->name('ai.lead-scoring');
+
+// Revenue Intelligence Routes
+Route::prefix('revenue-intelligence')->name('revenue-intelligence.')->group(function () {
+    Route::get('/dashboard', [RevenueIntelligenceController::class, 'dashboard'])->name('dashboard');
+    Route::get('/analytics', [RevenueIntelligenceController::class, 'analytics'])->name('analytics');
+    
+    // Deal Risk Analysis
+    Route::post('/deals/{deal}/analyze-risk', [RevenueIntelligenceController::class, 'analyzeDealRisk'])->name('deals.analyze-risk');
+    
+    // Competitive Intelligence
+    Route::post('/deals/{deal}/analyze-competition', [RevenueIntelligenceController::class, 'analyzeCompetition'])->name('deals.analyze-competition');
+    
+    // Price Optimization
+    Route::post('/deals/{deal}/optimize-price', [RevenueIntelligenceController::class, 'optimizePrice'])->name('deals.optimize-price');
+    
+    // Bulk Analysis
+    Route::post('/bulk-analysis', [RevenueIntelligenceController::class, 'bulkAnalysis'])->name('bulk-analysis');
+    
+    // Territory Performance
+    Route::get('/territory-performance', [RevenueIntelligenceController::class, 'territoryPerformance'])->name('territory-performance');
+    
+    // Commission Tracking
+    Route::get('/commission-tracking', [RevenueIntelligenceController::class, 'commissionTracking'])->name('commission-tracking');
+    
+    // Sales Coaching
+    Route::get('/sales-coaching', [RevenueIntelligenceController::class, 'salesCoaching'])->name('sales-coaching');
+    Route::patch('/sales-coaching/{coaching}/status', [RevenueIntelligenceController::class, 'updateCoachingStatus'])->name('coaching.update-status');
+});
 
 // AI Demo Routes (for demonstration without authentication)
 Route::get('/ai/demo/configuration', [AiDemoController::class, 'aiConfiguration'])->name('ai.demo.configuration');

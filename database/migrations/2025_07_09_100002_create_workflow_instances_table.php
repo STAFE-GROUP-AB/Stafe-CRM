@@ -23,7 +23,6 @@ return new class extends Migration
             $table->timestamps();
             
             $table->index(['status', 'created_at']);
-            $table->index(['entity_type', 'entity_id']);
         });
     }
 

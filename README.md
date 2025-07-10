@@ -246,9 +246,6 @@ php artisan key:generate
 # Run migrations and seed default data
 php artisan migrate --seed
 
-# Initialize security features (Phase 4.6)
-php artisan security:initialize
-
 # Build assets
 npm run build
 
@@ -510,11 +507,25 @@ GraphQL endpoint available at `/graphql` for complex queries and real-time subsc
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions to make Stafe CRM better! Please follow these guidelines:
+
+### Getting Started
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests (`composer test`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ### Development Setup
 
 ```bash
+# Clone your fork
+git clone https://github.com/YOUR-USERNAME/Stafe-CRM.git
+cd Stafe-CRM
+
 # Install dependencies
 composer install
 npm install
@@ -523,15 +534,21 @@ npm install
 cp .env.example .env
 php artisan key:generate
 
-# Run migrations
+# Run migrations with sample data
 php artisan migrate --seed
 
 # Start development server
-npm run dev
-php artisan serve
+composer run dev
 ```
 
-### Testing
+### Code Style
+
+- Follow PSR-12 coding standards
+- Use meaningful variable and method names
+- Add comments for complex logic
+- Write tests for new features
+
+### Running Tests
 
 ```bash
 # Run PHP tests
@@ -540,20 +557,31 @@ php artisan test
 # Run JavaScript tests
 npm test
 
-# Run all tests
+# Run all tests with coverage
 composer test
 ```
 
+## Support & Documentation
+
+- **Email**: support@stafe.com
+- **Documentation**: [docs.stafe-crm.com](https://docs.stafe-crm.com)
+- **Issues**: [GitHub Issues](https://github.com/STAFE-GROUP-AB/Stafe-CRM/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/STAFE-GROUP-AB/Stafe-CRM/discussions)
+
 ## License
 
-This project is open-sourced software licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## Acknowledgments
 
-- 📧 Email: support@stafe.com
-- 💬 Discord: [Join our community](https://discord.gg/stafe)
-- 📖 Documentation: [docs.stafe-crm.com](https://docs.stafe-crm.com)
-- 🐛 Issues: [GitHub Issues](https://github.com/STAFE-GROUP-AB/Stafe-CRM/issues)
+- Built with [Laravel](https://laravel.com)
+- UI components by [Livewire](https://livewire.laravel.com)
+- Styled with [Tailwind CSS](https://tailwindcss.com)
+- Icons by [Heroicons](https://heroicons.com)
+
+---
+
+**Built with ❤️ by the Stafe team**
 
 ## Current Implementation Status
 

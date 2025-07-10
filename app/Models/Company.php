@@ -97,6 +97,11 @@ class Company extends Model
         return $this->morphMany(ActivityLog::class, 'loggable');
     }
 
+    public function communications(): MorphMany
+    {
+        return $this->morphMany(Communication::class, 'communicable');
+    }
+
     public function getDisplayNameAttribute(): string
     {
         return $this->name;

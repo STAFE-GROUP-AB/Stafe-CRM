@@ -12,17 +12,22 @@ use App\Http\Controllers\TwilioWebhookController;
 use App\Http\Controllers\ChatWidgetController;
 use App\Http\Controllers\RevenueIntelligenceController;
 use App\Http\Controllers\Analytics\AnalyticsController;
+use App\Http\Controllers\LandingController;
 
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
+// Landing Pages (Public)
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/features', [LandingController::class, 'features'])->name('landing.features');
+Route::get('/pricing', [LandingController::class, 'pricing'])->name('landing.pricing');
+Route::get('/contact', [LandingController::class, 'contact'])->name('landing.contact');
 
+// Dashboard (Protected)
 Route::get('/dashboard', Dashboard::class)->name('dashboard');
 Route::get('/settings', SystemSettings::class)->name('settings');
 
 // AI Features Routes
 Route::get('/ai/configuration', AiConfiguration::class)->name('ai.configuration');
 Route::get('/ai/lead-scoring', LeadScoringDashboard::class)->name('ai.lead-scoring');
+Route::get('/ai/keys', \App\Livewire\UserAiKeyManager::class)->name('ai.keys');
 
 // Revenue Intelligence Routes
 Route::prefix('revenue-intelligence')->name('revenue-intelligence.')->group(function () {

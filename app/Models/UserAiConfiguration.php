@@ -15,6 +15,8 @@ class UserAiConfiguration extends Model
         'user_id',
         'ai_provider_id',
         'name',
+        'api_key',
+        'api_endpoint',
         'credentials',
         'default_models',
         'settings',
@@ -25,6 +27,7 @@ class UserAiConfiguration extends Model
     ];
 
     protected $casts = [
+        'api_key' => 'encrypted',
         'credentials' => 'encrypted:array',
         'default_models' => 'array',
         'settings' => 'array',
@@ -97,5 +100,10 @@ class UserAiConfiguration extends Model
         $models = $this->default_models ?? [];
         $models[$useCase] = $modelId;
         $this->default_models = $models;
+    }
+
+    public function decryptedApiKey(): string
+    {
+        return $this->api_key ? decrypt($this->api_key) : '';
     }
 }

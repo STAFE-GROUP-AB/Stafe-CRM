@@ -209,4 +209,44 @@ class Tenant extends Model
     {
         return $this->domain ?? "{$this->subdomain}." . config('app.domain');
     }
+
+    // Subscription relationships
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription(): ?Subscription
+    {
+        return $this->subscriptions()->where('status', 'active')->first();
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscriptions()->where('status', 'active')->exists();
+    }
+
+    public function isSubscriptionExpired(): bool
+    {
+        $subscription = $this->activeSubscription();
+        return $subscription ? $subscription->isExpired() : true;
+    }
+
+    public function canAddUsers(): bool
+    {
+        $subscription = $this->activeSubscription();
+        return $subscription ? $subscription->canAddUsers() : false;
+    }
+
+    public function getActiveUserCount(): int
+    {
+        $subscription = $this->activeSubscription();
+        return $subscription ? $subscription->getActiveUserCountAttribute() : 0;
+    }
+
+    public function getRemainingUserSlots(): int
+    {
+        $subscription = $this->activeSubscription();
+        return $subscription ? ($subscription->quantity - $subscription->getActiveUserCountAttribute()) : 0;
+    }
 }

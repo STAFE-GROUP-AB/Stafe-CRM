@@ -34,7 +34,7 @@ return new class extends Migration
             $table->index(['type', 'status']);
             $table->index(['difficulty_level', 'status']);
             $table->index(['created_by', 'status']);
-            $table->fullText(['title', 'description', 'overview']);
+            // $table->fullText(['title', 'description', 'overview']); // Commented out for SQLite compatibility
         });
     }
 

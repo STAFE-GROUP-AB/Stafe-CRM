@@ -31,7 +31,7 @@ return new class extends Migration
             $table->index(['tenant_id', 'event_type']);
             $table->index(['user_id', 'occurred_at']);
             $table->index(['event_category', 'risk_level']);
-            $table->index(['auditable_type', 'auditable_id']);
+            // $table->index(['auditable_type', 'auditable_id']); // Already created by morphs()
             $table->index('occurred_at');
         });
     }

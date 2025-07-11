@@ -34,7 +34,7 @@ return new class extends Migration
             $table->index(['type', 'status']);
             $table->index(['category_id', 'status']);
             $table->index(['created_by', 'status']);
-            $table->fullText(['title', 'description', 'content']);
+            // $table->fullText(['title', 'description', 'content']); // Commented out for SQLite compatibility
         });
     }
 

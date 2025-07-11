@@ -78,6 +78,9 @@ Route::get('/tasks', function () {
     return view('tasks.index');
 })->name('tasks.index');
 
+// Stalled Customers Feature
+Route::get('/stalled-customers', \App\Livewire\StalledCustomers::class)->name('stalled-customers');
+
 // Placeholder create routes
 Route::get('/contacts/create', function () {
     return view('contacts.create');

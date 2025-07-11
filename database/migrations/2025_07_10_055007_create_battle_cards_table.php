@@ -41,7 +41,7 @@ return new class extends Migration
             $table->index(['competitor_name', 'status']);
             $table->index(['threat_level', 'status']);
             $table->index(['created_by', 'status']);
-            $table->fullText(['title', 'competitor_name', 'overview']);
+            // $table->fullText(['title', 'competitor_name', 'overview']); // Commented out for SQLite compatibility
         });
     }
 

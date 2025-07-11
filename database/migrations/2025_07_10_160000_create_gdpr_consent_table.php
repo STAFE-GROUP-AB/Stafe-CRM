@@ -24,7 +24,7 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->timestamps();
 
-            $table->index(['consentable_type', 'consentable_id']);
+            // $table->index(['consentable_type', 'consentable_id']); // Already created by morphs()
             $table->index(['tenant_id', 'status']);
             $table->index('purpose');
         });

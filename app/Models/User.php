@@ -357,4 +357,36 @@ class User extends Authenticatable
     {
         return $this->hasMany(ContentUsageAnalytic::class);
     }
+
+    // Subscription relationships
+    public function userSubscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function activeUserSubscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class)->where('status', 'active');
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeUserSubscriptions()->exists();
+    }
+
+    public function getCurrentSubscription(): ?UserSubscription
+    {
+        return $this->activeUserSubscriptions()->first();
+    }
+
+    public function canAccessFeature(string $feature): bool
+    {
+        $subscription = $this->getCurrentSubscription();
+        
+        if (!$subscription) {
+            return false;
+        }
+
+        return $subscription->subscription->plan->hasFeature($feature);
+    }
 }

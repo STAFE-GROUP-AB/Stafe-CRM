@@ -117,6 +117,33 @@
         </div>
     </div>
 
+    <!-- Alert Cards -->
+    @if($stats['stalled_customers'] > 0)
+    <div class="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-xl p-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-red-100 rounded-lg">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-red-900">{{ number_format($stats['stalled_customers']) }} Stalled Customers</h3>
+                    <p class="text-sm text-red-700">These customers haven't been contacted in the last 30 days</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="{{ route('stalled-customers') }}" class="inline-flex items-center px-4 py-2 border border-red-300 rounded-lg text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    View Stalled Customers
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Recent Deals -->

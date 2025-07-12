@@ -30,6 +30,11 @@ class Dashboard extends Component
             'emails_opened' => Email::whereNotNull('opened_at')->count(),
             'active_teams' => Team::where('is_active', true)->count(),
             'recent_imports' => ImportJob::where('created_at', '>=', now()->subDays(7))->count(),
+            // Stalled Customers
+            'stalled_customers' => Contact::where(function($query) {
+                $query->where('last_contacted_at', '<=', now()->subDays(30))
+                      ->orWhereNull('last_contacted_at');
+            })->count(),
         ];
 
         $recent_deals = Deal::with(['company', 'contact', 'pipelineStage'])

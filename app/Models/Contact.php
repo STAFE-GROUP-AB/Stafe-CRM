@@ -172,4 +172,54 @@ class Contact extends Model
             'personal_phone',
         ];
     }
+
+    /**
+     * Calculate and return the health score for this contact
+     */
+    public function healthScore(): float
+    {
+        // If there's a customer health score record, use it
+        if ($this->customerHealthScore) {
+            return $this->customerHealthScore->score;
+        }
+        
+        // Otherwise, calculate a basic health score based on engagement
+        $score = 50; // Start with neutral score
+        
+        // Positive factors
+        if ($this->last_contacted_at && $this->last_contacted_at->diffInDays() < 30) {
+            $score += 20; // Recent contact
+        }
+        
+        if ($this->deals()->where('status', 'open')->exists()) {
+            $score += 15; // Active deals
+        }
+        
+        if ($this->communications()->where('created_at', '>', now()->subDays(30))->exists()) {
+            $score += 10; // Recent communications
+        }
+        
+        if ($this->lifetime_value && $this->lifetime_value > 0) {
+            $score += 10; // Has value
+        }
+        
+        // Negative factors
+        if ($this->last_contacted_at && $this->last_contacted_at->diffInDays() > 90) {
+            $score -= 15; // No recent contact
+        }
+        
+        if (!$this->last_contacted_at) {
+            $score -= 10; // Never contacted
+        }
+        
+        return max(0, min(100, $score));
+    }
+
+    /**
+     * Get the customer health score relationship
+     */
+    public function customerHealthScore(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(CustomerHealthScore::class);
+    }
 }

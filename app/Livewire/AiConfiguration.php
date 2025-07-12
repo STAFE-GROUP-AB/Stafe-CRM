@@ -40,7 +40,13 @@ class AiConfiguration extends Component
     {
         $aiService = new AiService();
         $this->providers = $aiService->getAvailableProviders();
-        $this->userConfigurations = $aiService->getUserConfigurations(Auth::id());
+        
+        // Check if user is authenticated
+        if (Auth::check() && Auth::id()) {
+            $this->userConfigurations = $aiService->getUserConfigurations(Auth::id());
+        } else {
+            $this->userConfigurations = collect();
+        }
     }
 
     public function selectProvider($providerId)

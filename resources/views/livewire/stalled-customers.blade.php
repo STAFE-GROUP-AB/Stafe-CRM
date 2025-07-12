@@ -26,7 +26,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Total Stalled</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ number_format($stats['total_stalled']) }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ number_format($this->stats['total_stalled']) }}</dd>
                     </dl>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Never Contacted</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ number_format($stats['never_contacted']) }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ number_format($this->stats['never_contacted']) }}</dd>
                     </dl>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Avg Days Since Contact</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ number_format($stats['avg_days_since_contact'] ?? 0) }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ number_format($this->stats['avg_days_since_contact'] ?? 0) }}</dd>
                     </dl>
                 </div>
             </div>

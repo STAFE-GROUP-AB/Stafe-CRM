@@ -117,10 +117,10 @@
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Email</h3>
                             <p class="text-gray-600">
-                                <a href="mailto:sales@stafe.com" class="text-blue-600 hover:text-blue-800">sales@stafe.com</a> - Sales inquiries
+                                <a href="mailto:crm@stafegroup.com" class="text-blue-600 hover:text-blue-800">crm@stafegroup.com</a> - Sales inquiries
                             </p>
                             <p class="text-gray-600">
-                                <a href="mailto:support@stafe.com" class="text-blue-600 hover:text-blue-800">support@stafe.com</a> - Technical support
+                                <a href="mailto:crm@stafegroup.com" class="text-blue-600 hover:text-blue-800">crm@stafegroup.com</a> - Technical support
                             </p>
                         </div>
                     </div>

@@ -37,8 +37,12 @@ class AiService
     /**
      * Get user's AI configurations
      */
-    public function getUserConfigurations(int $userId)
+    public function getUserConfigurations(?int $userId)
     {
+        if (!$userId) {
+            return collect();
+        }
+        
         return UserAiConfiguration::forUser($userId)
             ->active()
             ->with(['aiProvider', 'aiProvider.aiModels'])

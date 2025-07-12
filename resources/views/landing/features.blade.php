@@ -7,12 +7,20 @@
 <!-- Hero Section -->
 <section class="bg-gradient-to-br from-blue-50 to-purple-50 py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6" data-aos="fade-up">
             Powerful Features for Modern Teams
         </h1>
-        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="200">
             Everything you need to manage customer relationships, drive sales, and grow your business with advanced AI-powered insights.
         </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="400">
+            <a href="{{ route('dashboard') }}" class="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
+                Start Free Trial
+            </a>
+            <a href="{{ route('landing.contact') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold border border-blue-600 hover:bg-blue-50 transition-colors">
+                Schedule Demo
+            </a>
+        </div>
     </div>
 </section>
 
@@ -20,10 +28,10 @@
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">
                 Core CRM Functionality
             </h2>
-            <p class="text-xl text-gray-600">
+            <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="200">
                 Complete customer relationship management with all the essentials
             </p>
         </div>
@@ -267,20 +275,31 @@
 <!-- CTA Section -->
 <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" data-aos="fade-up">
             Experience All Features Today
         </h2>
-        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="200">
             Start your free trial and discover how Stafe CRM can transform your business operations.
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ route('dashboard') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="400">
+            <a href="{{ route('dashboard') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors transform hover:scale-105">
                 Start Free Trial
             </a>
-            <a href="{{ route('landing.contact') }}" class="bg-transparent text-white px-8 py-4 rounded-lg text-lg font-semibold border border-white hover:bg-white hover:text-blue-600 transition-colors">
+            <a href="{{ route('landing.contact') }}" class="bg-transparent text-white px-8 py-4 rounded-lg text-lg font-semibold border border-white hover:bg-white hover:text-blue-600 transition-colors transform hover:scale-105">
                 Schedule Demo
             </a>
         </div>
     </div>
 </section>
+
+<!-- AOS Animation Library -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true,
+    offset: 100
+  });
+</script>
 @endsection

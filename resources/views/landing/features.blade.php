@@ -140,29 +140,44 @@
                 </ul>
             </div>
             
-            <div class="bg-white p-8 rounded-xl shadow-lg">
+            <div class="bg-white p-8 rounded-xl shadow-lg" data-aos="fade-left">
                 <h4 class="text-lg font-semibold text-gray-900 mb-4">Lead Score Dashboard</h4>
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-md">
                         <div class="flex items-center">
-                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
                             <span class="text-sm text-gray-700">Sarah Johnson</span>
                         </div>
-                        <span class="text-sm font-semibold text-green-600">95</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                         <div class="flex items-center">
-                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-3">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                            <span class="text-sm font-semibold text-green-600">95</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-md">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-3 animate-pulse"></div>
                             <span class="text-sm text-gray-700">Mike Chen</span>
                         </div>
-                        <span class="text-sm font-semibold text-blue-600">87</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                         <div class="flex items-center">
-                            <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-3">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 87%"></div>
+                            </div>
+                            <span class="text-sm font-semibold text-blue-600">87</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-md">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3 animate-pulse"></div>
                             <span class="text-sm text-gray-700">Emma Wilson</span>
                         </div>
-                        <span class="text-sm font-semibold text-yellow-600">72</span>
+                        <div class="flex items-center">
+                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-3">
+                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 72%"></div>
+                            </div>
+                            <span class="text-sm font-semibold text-yellow-600">72</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -226,20 +241,225 @@
     </div>
 </section>
 
+<!-- Workflow Automation & Integration -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">
+                Workflow Automation & Integrations
+            </h2>
+            <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="200">
+                Automate repetitive tasks and connect with your favorite tools
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
+            <div data-aos="fade-right">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Smart Workflow Automation</h3>
+                <p class="text-lg text-gray-600 mb-6">
+                    Create intelligent workflows that automatically handle routine tasks, update records, send notifications, and move deals through your pipeline.
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-700">Trigger-based automation</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-700">Email sequence automation</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-700">Task auto-assignment</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-700">Pipeline stage automation</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-xl" data-aos="fade-left">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4">Workflow Builder</h4>
+                <div class="space-y-4">
+                    <div class="flex items-center p-3 bg-white rounded-lg shadow-sm">
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-white text-sm font-semibold">1</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">New Lead Created</p>
+                            <p class="text-xs text-gray-500">Trigger</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="w-0.5 h-6 bg-gray-300"></div>
+                    </div>
+                    <div class="flex items-center p-3 bg-white rounded-lg shadow-sm">
+                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-white text-sm font-semibold">2</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Send Welcome Email</p>
+                            <p class="text-xs text-gray-500">Action</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="w-0.5 h-6 bg-gray-300"></div>
+                    </div>
+                    <div class="flex items-center p-3 bg-white rounded-lg shadow-sm">
+                        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-white text-sm font-semibold">3</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Assign to Sales Rep</p>
+                            <p class="text-xs text-gray-500">Action</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Integration Logos -->
+        <div class="text-center mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-8" data-aos="fade-up">
+                Seamlessly Integrate with 100+ Tools
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-70">
+                <div class="flex items-center justify-center h-12" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="w-20 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">Slack</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center h-12" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="w-20 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">Gmail</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center h-12" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="w-20 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">Zoom</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center h-12" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="w-20 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">Teams</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center h-12" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="w-20 h-8 bg-gradient-to-r from-pink-500 to-red-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">HubSpot</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center h-12" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="w-20 h-8 bg-gradient-to-r from-teal-500 to-green-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">Zapier</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Performance & Analytics -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">
+                Advanced Analytics & Reporting
+            </h2>
+            <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="200">
+                Make data-driven decisions with powerful insights and visual analytics
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Custom Dashboards</h3>
+                <p class="text-gray-600">Build personalized dashboards with drag-and-drop widgets to track the metrics that matter most to your business.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Sales Forecasting</h3>
+                <p class="text-gray-600">Predict future revenue with AI-powered forecasting models that analyze historical data and current pipeline.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Performance Tracking</h3>
+                <p class="text-gray-600">Monitor team performance with detailed metrics on conversion rates, activity levels, and goal achievement.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="400">
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Visual Analytics</h3>
+                <p class="text-gray-600">Interactive charts, heat maps, and relationship networks that make complex data easy to understand.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="500">
+                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Automated Reports</h3>
+                <p class="text-gray-600">Schedule and automate report generation and delivery to stakeholders with customizable formats.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow" data-aos="fade-up" data-aos-delay="600">
+                <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">ROI Analysis</h3>
+                <p class="text-gray-600">Track return on investment across campaigns, channels, and activities to optimize your marketing spend.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Security Features -->
 <section class="py-20 bg-gray-900 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold mb-4">
+            <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">
                 Enterprise Security & Compliance
             </h2>
-            <p class="text-xl text-gray-300">
+            <p class="text-xl text-gray-300" data-aos="fade-up" data-aos-delay="200">
                 Your data is protected with enterprise-grade security
             </p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-gray-800 p-6 rounded-xl">
+            <div class="bg-gray-800 p-6 rounded-xl hover:bg-gray-700 transition-colors" data-aos="fade-up" data-aos-delay="100">
                 <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
@@ -249,7 +469,7 @@
                 <p class="text-gray-300">Complete data privacy management with consent tracking and automated compliance workflows.</p>
             </div>
             
-            <div class="bg-gray-800 p-6 rounded-xl">
+            <div class="bg-gray-800 p-6 rounded-xl hover:bg-gray-700 transition-colors" data-aos="fade-up" data-aos-delay="200">
                 <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -259,7 +479,7 @@
                 <p class="text-gray-300">Field-level encryption for sensitive data with configurable sensitivity levels.</p>
             </div>
             
-            <div class="bg-gray-800 p-6 rounded-xl">
+            <div class="bg-gray-800 p-6 rounded-xl hover:bg-gray-700 transition-colors" data-aos="fade-up" data-aos-delay="300">
                 <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>

@@ -17,6 +17,7 @@ class StalledCustomers extends Component
     public $selectedOwner = '';
     public $sortBy = 'last_contacted_at';
     public $sortDirection = 'asc';
+    public $stats = [];
 
     protected $queryString = ['search', 'selectedOwner', 'stalledDays'];
 
@@ -59,7 +60,7 @@ class StalledCustomers extends Component
             ->groupBy('owner_id')
             ->get();
 
-        $stats = [
+        $this->stats = [
             'total_stalled' => Contact::where(function($query) {
                 $query->where('last_contacted_at', '<=', now()->subDays($this->stalledDays))
                       ->orWhereNull('last_contacted_at');
@@ -74,7 +75,6 @@ class StalledCustomers extends Component
             'stalledCustomers' => $stalledCustomers,
             'salesReps' => $salesReps,
             'stalledByRep' => $stalledByRep,
-            'stats' => $stats,
         ])->layout('layouts.app');
     }
 

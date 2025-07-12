@@ -20,6 +20,7 @@ A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS
 - Lifetime value calculations
 - Birthday and bio information
 - Custom fields and tagging system
+- **Stalled Customers Tracking** - Identify customers needing follow-up based on last contact date with filtering, search, and dashboard alerts
 
 ### 💰 **Deal Pipeline**
 - Customizable pipeline stages with probability tracking
@@ -587,7 +588,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### ✅ Core CRM Features (Implemented)
 - [x] Company Management - Complete company profiles with custom fields
-- [x] Contact Management - Individual contacts with company relationships
+- [x] Contact Management - Individual contacts with company relationships and stalled customer tracking
 - [x] Deal Pipeline - Customizable pipeline stages with forecasting
 - [x] Task Management - Activities with polymorphic relationships
 - [x] Notes & Documentation - Contextual notes with file attachments

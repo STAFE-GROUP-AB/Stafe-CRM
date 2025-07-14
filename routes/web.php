@@ -11,8 +11,33 @@ use App\Http\Controllers\AiDemoController;
 use App\Http\Controllers\TwilioWebhookController;
 use App\Http\Controllers\ChatWidgetController;
 use App\Http\Controllers\RevenueIntelligenceController;
+use App\Http\Controllers\SalesEnablementController;
 use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\LandingController;
+
+// Authentication Routes (manual definition instead of Auth::routes())
+Route::get('login', function () {
+    return view('auth.login');
+})->name('login');
+
+Route::get('register', function () {
+    return view('auth.register');
+})->name('register');
+
+Route::post('login', function () {
+    // TODO: Implement login logic
+    return redirect()->route('dashboard');
+})->name('login.post');
+
+Route::post('register', function () {
+    // TODO: Implement registration logic
+    return redirect()->route('dashboard');
+})->name('register.post');
+
+Route::post('logout', function () {
+    auth()->logout();
+    return redirect()->route('landing');
+})->name('logout');
 
 // Landing Pages (Public)
 Route::get('/', [LandingController::class, 'index'])->name('landing');

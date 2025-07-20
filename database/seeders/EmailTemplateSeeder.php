@@ -57,7 +57,9 @@ class EmailTemplateSeeder extends Seeder
         ];
 
         foreach ($templates as $template) {
-            EmailTemplate::create($template);
+            if (!EmailTemplate::where('slug', $template['slug'])->exists()) {
+                EmailTemplate::create($template);
+            }
         }
     }
 }

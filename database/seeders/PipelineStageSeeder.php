@@ -83,7 +83,9 @@ class PipelineStageSeeder extends Seeder
         ];
 
         foreach ($stages as $stage) {
-            PipelineStage::create($stage);
+            if (!PipelineStage::where('slug', $stage['slug'])->exists()) {
+                PipelineStage::create($stage);
+            }
         }
     }
 }

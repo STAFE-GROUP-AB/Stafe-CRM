@@ -19,6 +19,9 @@ class DemoDataSeeder extends Seeder
     {
         $this->command->info('Seeding demo data...');
 
+        // Ensure pipeline stages exist before creating deals
+        $this->call(PipelineStageSeeder::class);
+
         // Create demo users
         $this->createDemoUsers();
         
@@ -73,6 +76,14 @@ class DemoDataSeeder extends Seeder
      */
     private function createDemoCompanies(): void
     {
+        // Get all available users to assign as company owners
+        $users = User::all();
+        
+        if ($users->isEmpty()) {
+            $this->command->warn('No users found, skipping company creation');
+            return;
+        }
+
         $demoCompanies = [
             [
                 'name' => 'Tech Solutions Inc.',
@@ -103,8 +114,11 @@ class DemoDataSeeder extends Seeder
             ],
         ];
 
-        foreach ($demoCompanies as $companyData) {
+        foreach ($demoCompanies as $index => $companyData) {
             if (!Company::where('email', $companyData['email'])->exists()) {
+                // Assign a user as the company owner (cycle through available users)
+                $companyData['owner_id'] = $users->get($index % $users->count())->id;
+                
                 Company::create($companyData);
                 $this->command->info("✓ Created demo company: {$companyData['name']}");
             }
@@ -117,9 +131,15 @@ class DemoDataSeeder extends Seeder
     private function createDemoContacts(): void
     {
         $companies = Company::all();
+        $users = User::all();
         
         if ($companies->isEmpty()) {
             $this->command->warn('No companies found, skipping contact creation');
+            return;
+        }
+
+        if ($users->isEmpty()) {
+            $this->command->warn('No users found, skipping contact creation');
             return;
         }
 
@@ -157,6 +177,9 @@ class DemoDataSeeder extends Seeder
         foreach ($demoContacts as $index => $contactData) {
             if (!Contact::where('email', $contactData['email'])->exists()) {
                 $contactData['company_id'] = $companies->get($index % $companies->count())->id;
+                // Assign a user as the contact owner (cycle through available users)
+                $contactData['owner_id'] = $users->get($index % $users->count())->id;
+                
                 Contact::create($contactData);
                 $this->command->info("✓ Created demo contact: {$contactData['first_name']} {$contactData['last_name']}");
             }
@@ -170,9 +193,15 @@ class DemoDataSeeder extends Seeder
     {
         $contacts = Contact::all();
         $users = User::all();
+        $pipelineStages = \App\Models\PipelineStage::all();
         
         if ($contacts->isEmpty() || $users->isEmpty()) {
             $this->command->warn('No contacts or users found, skipping deal creation');
+            return;
+        }
+
+        if ($pipelineStages->isEmpty()) {
+            $this->command->warn('No pipeline stages found, skipping deal creation');
             return;
         }
 
@@ -206,6 +235,22 @@ class DemoDataSeeder extends Seeder
         foreach ($demoDeals as $index => $dealData) {
             $dealData['contact_id'] = $contacts->get($index % $contacts->count())->id;
             $dealData['owner_id'] = $users->get($index % $users->count())->id;
+            
+            // Assign a pipeline stage based on probability
+            if ($dealData['probability'] >= 75) {
+                $stage = $pipelineStages->where('slug', 'negotiation')->first();
+            } elseif ($dealData['probability'] >= 50) {
+                $stage = $pipelineStages->where('slug', 'proposal')->first();
+            } elseif ($dealData['probability'] >= 25) {
+                $stage = $pipelineStages->where('slug', 'qualified')->first();
+            } else {
+                $stage = $pipelineStages->where('slug', 'lead')->first();
+            }
+            
+            $dealData['pipeline_stage_id'] = $stage ? $stage->id : $pipelineStages->first()->id;
+            
+            // Generate slug from name
+            $dealData['slug'] = \Illuminate\Support\Str::slug($dealData['name']);
             
             Deal::create($dealData);
             $this->command->info("✓ Created demo deal: {$dealData['name']}");

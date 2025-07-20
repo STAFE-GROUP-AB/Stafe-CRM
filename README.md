@@ -564,10 +564,8 @@ composer test
 
 ## Support & Documentation
 
-- **Email**: support@stafe.com
-- **Documentation**: [docs.stafe-crm.com](https://docs.stafe-crm.com)
+- **Email**: andreas@stafegroup.com
 - **Issues**: [GitHub Issues](https://github.com/STAFE-GROUP-AB/Stafe-CRM/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/STAFE-GROUP-AB/Stafe-CRM/discussions)
 
 ## License
 
@@ -582,7 +580,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ by the Stafe team**
+
 
 ## Current Implementation Status
 
@@ -670,11 +668,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### 🔮 Future Development
 - [ ] Mobile applications (iOS/Android)
-- [ ] Blockchain integration
 - [ ] IoT data integration
 - [ ] Advanced AI capabilities
 - [ ] International localization expansion
 
 ---
 
-**Built with ❤️ by the Stafe team**
+**Built with ❤️ by the Stafe Development Team from Sweden**
+

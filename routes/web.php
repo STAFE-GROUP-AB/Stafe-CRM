@@ -14,30 +14,16 @@ use App\Http\Controllers\RevenueIntelligenceController;
 use App\Http\Controllers\SalesEnablementController;
 use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
-// Authentication Routes (manual definition instead of Auth::routes())
-Route::get('login', function () {
-    return view('auth.login');
-})->name('login');
+// Authentication Routes
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login'])->name('login.post');
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('register', function () {
-    return view('auth.register');
-})->name('register');
-
-Route::post('login', function () {
-    // TODO: Implement login logic
-    return redirect()->route('dashboard');
-})->name('login.post');
-
-Route::post('register', function () {
-    // TODO: Implement registration logic
-    return redirect()->route('dashboard');
-})->name('register.post');
-
-Route::post('logout', function () {
-    auth()->logout();
-    return redirect()->route('landing');
-})->name('logout');
+Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [RegisterController::class, 'register'])->name('register.post');
 
 // Landing Pages (Public)
 Route::get('/', [LandingController::class, 'index'])->name('landing');

@@ -95,13 +95,14 @@ class UserPoint extends Model
 
     public function getLevelProgress(): array
     {
-        $currentLevelPoints = $this->calculatePointsForLevel($this->current_level);
-        $nextLevelPoints = $this->calculatePointsForLevel($this->current_level + 1);
+        $currentLevel = $this->current_level ?? 1;
+        $currentLevelPoints = $this->calculatePointsForLevel($currentLevel);
+        $nextLevelPoints = $this->calculatePointsForLevel($currentLevel + 1);
         $pointsInCurrentLevel = $this->total_points - $currentLevelPoints;
         $pointsNeededForLevel = $nextLevelPoints - $currentLevelPoints;
         
         return [
-            'current_level' => $this->current_level,
+            'current_level' => $currentLevel,
             'points_in_level' => $pointsInCurrentLevel,
             'points_needed' => $pointsNeededForLevel,
             'progress_percentage' => $pointsNeededForLevel > 0 ? round(($pointsInCurrentLevel / $pointsNeededForLevel) * 100) : 100,

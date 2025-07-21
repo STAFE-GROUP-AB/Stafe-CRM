@@ -1,0 +1,311 @@
+/* Forest Theme Design System */
+:root {
+    /* Primary Colors - Deep Forest Greens */
+    --forest-primary: #1B4332;
+    --forest-primary-hover: #163A2C;
+    --forest-primary-light: #2D6A4F;
+    
+    /* Secondary Colors - Earth Browns */
+    --forest-secondary: #3E2723;
+    --forest-secondary-hover: #321F1D;
+    --forest-secondary-light: #5D4037;
+    
+    /* Accent Colors - Moss & Sage */
+    --forest-accent: #52796F;
+    --forest-accent-light: #708D81;
+    
+    /* Background Colors */
+    --forest-bg-primary: #FEFEFE;
+    --forest-bg-secondary: #F8F7F4;
+    --forest-bg-tertiary: #EFEDE5;
+    
+    /* Card & Surface Colors */
+    --forest-surface: #FFFFFF;
+    --forest-surface-hover: #FAFAF8;
+    
+    /* Border Colors */
+    --forest-border: #D4D2C8;
+    --forest-border-focus: #52796F;
+    
+    /* Text Colors */
+    --forest-text-primary: #1B1B1B;
+    --forest-text-secondary: #4A4A4A;
+    --forest-text-muted: #6B6B6B;
+    
+    /* Status Colors */
+    --forest-success: #2D6A4F;
+    --forest-warning: #B07C0C;
+    --forest-error: #922B21;
+    --forest-info: #1E5F74;
+    
+    /* Shadows */
+    --forest-shadow-sm: 0 1px 2px 0 rgba(27, 67, 50, 0.05);
+    --forest-shadow: 0 1px 3px 0 rgba(27, 67, 50, 0.1), 0 1px 2px 0 rgba(27, 67, 50, 0.06);
+    --forest-shadow-md: 0 4px 6px -1px rgba(27, 67, 50, 0.1), 0 2px 4px -1px rgba(27, 67, 50, 0.06);
+    --forest-shadow-lg: 0 10px 15px -3px rgba(27, 67, 50, 0.1), 0 4px 6px -2px rgba(27, 67, 50, 0.05);
+    --forest-shadow-xl: 0 20px 25px -5px rgba(27, 67, 50, 0.1), 0 10px 10px -5px rgba(27, 67, 50, 0.04);
+    
+    /* Border Radius */
+    --forest-radius-sm: 0.375rem;
+    --forest-radius: 0.5rem;
+    --forest-radius-md: 0.75rem;
+    --forest-radius-lg: 1rem;
+    --forest-radius-xl: 1.5rem;
+    
+    /* Transitions */
+    --forest-transition: all 0.2s ease;
+}
+
+/* Card Component */
+.forest-card {
+    background: var(--forest-surface);
+    border: 1px solid var(--forest-border);
+    border-radius: var(--forest-radius-lg);
+    box-shadow: var(--forest-shadow);
+    padding: 1.5rem;
+    transition: var(--forest-transition);
+}
+
+.forest-card:hover {
+    box-shadow: var(--forest-shadow-md);
+}
+
+/* Form Components */
+.forest-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--forest-border);
+    border-radius: var(--forest-radius);
+    background: var(--forest-surface);
+    color: var(--forest-text-primary);
+    font-size: 0.875rem;
+    transition: var(--forest-transition);
+}
+
+.forest-input:focus {
+    outline: none;
+    border-color: var(--forest-accent);
+    box-shadow: 0 0 0 3px rgba(82, 121, 111, 0.1);
+}
+
+.forest-input.error {
+    border-color: var(--forest-error);
+}
+
+.forest-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--forest-text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.forest-hint {
+    font-size: 0.75rem;
+    color: var(--forest-text-muted);
+    margin-top: 0.25rem;
+}
+
+.forest-error {
+    font-size: 0.75rem;
+    color: var(--forest-error);
+    margin-top: 0.25rem;
+}
+
+/* Buttons */
+.forest-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--forest-radius);
+    transition: var(--forest-transition);
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.forest-btn-primary {
+    background: var(--forest-primary);
+    color: white;
+}
+
+.forest-btn-primary:hover {
+    background: var(--forest-primary-hover);
+    box-shadow: var(--forest-shadow-md);
+}
+
+.forest-btn-secondary {
+    background: var(--forest-surface);
+    color: var(--forest-text-primary);
+    border: 1.5px solid var(--forest-border);
+}
+
+.forest-btn-secondary:hover {
+    background: var(--forest-bg-secondary);
+    border-color: var(--forest-accent);
+}
+
+/* Select */
+.forest-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 2.5rem;
+    border: 1.5px solid var(--forest-border);
+    border-radius: var(--forest-radius);
+    background: var(--forest-surface);
+    color: var(--forest-text-primary);
+    font-size: 0.875rem;
+    transition: var(--forest-transition);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M7 7l3 3 3-3' stroke='%234A4A4A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+}
+
+.forest-select:focus {
+    outline: none;
+    border-color: var(--forest-accent);
+    box-shadow: 0 0 0 3px rgba(82, 121, 111, 0.1);
+}
+
+/* Textarea */
+.forest-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--forest-border);
+    border-radius: var(--forest-radius);
+    background: var(--forest-surface);
+    color: var(--forest-text-primary);
+    font-size: 0.875rem;
+    transition: var(--forest-transition);
+    resize: vertical;
+}
+
+.forest-textarea:focus {
+    outline: none;
+    border-color: var(--forest-accent);
+    box-shadow: 0 0 0 3px rgba(82, 121, 111, 0.1);
+}
+
+/* Section Headers */
+.forest-section-header {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--forest-text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--forest-border);
+}
+
+/* Form Group */
+.forest-form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Page Header */
+.forest-page-header {
+    background: var(--forest-bg-secondary);
+    border-bottom: 1px solid var(--forest-border);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.forest-page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--forest-primary);
+}
+
+/* Breadcrumb */
+.forest-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--forest-text-muted);
+}
+
+.forest-breadcrumb a {
+    color: var(--forest-accent);
+    text-decoration: none;
+    transition: var(--forest-transition);
+}
+
+.forest-breadcrumb a:hover {
+    color: var(--forest-accent-light);
+}
+
+/* File Upload */
+.forest-file-upload {
+    border: 2px dashed var(--forest-border);
+    border-radius: var(--forest-radius-md);
+    padding: 2rem;
+    text-align: center;
+    background: var(--forest-bg-tertiary);
+    transition: var(--forest-transition);
+}
+
+.forest-file-upload:hover {
+    border-color: var(--forest-accent);
+    background: var(--forest-bg-secondary);
+}
+
+/* Badges */
+.forest-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: var(--forest-radius-sm);
+}
+
+.forest-badge-success {
+    background: rgba(45, 106, 79, 0.1);
+    color: var(--forest-success);
+}
+
+.forest-badge-warning {
+    background: rgba(176, 124, 12, 0.1);
+    color: var(--forest-warning);
+}
+
+.forest-badge-error {
+    background: rgba(146, 43, 33, 0.1);
+    color: var(--forest-error);
+}
+
+/* Loading States */
+.forest-loading {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--forest-border);
+    border-radius: 50%;
+    border-top-color: var(--forest-primary);
+    animation: forest-spin 0.8s linear infinite;
+}
+
+@keyframes forest-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --forest-bg-primary: #0F0F0F;
+        --forest-bg-secondary: #1A1A1A;
+        --forest-bg-tertiary: #242424;
+        --forest-surface: #1F1F1F;
+        --forest-surface-hover: #2A2A2A;
+        --forest-border: #2F2F2F;
+        --forest-text-primary: #E5E5E5;
+        --forest-text-secondary: #B5B5B5;
+        --forest-text-muted: #858585;
+    }
+}

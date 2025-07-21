@@ -34,7 +34,7 @@ return new class extends Migration
             $table->timestamp('last_calculated_at');
             $table->timestamps();
 
-            $table->index(['user_id', 'payment_period_start', 'payment_period_end']);
+            $table->index(['user_id', 'payment_period_start', 'payment_period_end'], 'idx_commission_user_period');
             $table->index(['deal_id', 'payment_status']);
             $table->index('payment_status');
             $table->index('dispute_status');

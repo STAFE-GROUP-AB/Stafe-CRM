@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['simulation_type', 'tenant_id']);
-            $table->index(['user_id', 'forecast_start_date', 'forecast_end_date']);
+            $table->index(['user_id', 'forecast_start_date', 'forecast_end_date'], 'idx_forecast_sim_user_dates');
         });
     }
 

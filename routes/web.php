@@ -44,39 +44,29 @@ Route::middleware('auth')->group(function () {
     // Stalled Customers Feature
     Route::get('/stalled-customers', \App\Livewire\StalledCustomers::class)->name('stalled-customers');
     
-    // Placeholder routes for navigation (will be implemented with Livewire components)
-    Route::get('/contacts', function () {
-        return view('contacts.index');
-    })->name('contacts.index');
-
-    Route::get('/companies', function () {
-        return view('companies.index');
-    })->name('companies.index');
-
-    Route::get('/deals', function () {
-        return view('deals.index');
-    })->name('deals.index');
-
-    Route::get('/tasks', function () {
-        return view('tasks.index');
-    })->name('tasks.index');
+    // Companies - RESTful Routes
+    Route::get('/companies', \App\Livewire\CompanyManager::class)->name('companies.index');
+    Route::get('/companies/create', \App\Livewire\CompanyManager::class)->name('companies.create')->defaults('action', 'create');
+    Route::get('/companies/{company}', \App\Livewire\CompanyManager::class)->name('companies.show')->defaults('action', 'show');
+    Route::get('/companies/{company}/edit', \App\Livewire\CompanyManager::class)->name('companies.edit')->defaults('action', 'edit');
     
-    // Placeholder create routes
-    Route::get('/contacts/create', function () {
-        return view('contacts.create');
-    })->name('contacts.create');
-
-    Route::get('/companies/create', function () {
-        return view('companies.create');
-    })->name('companies.create');
-
-    Route::get('/deals/create', function () {
-        return view('deals.create');
-    })->name('deals.create');
-
-    Route::get('/tasks/create', function () {
-        return view('tasks.create');
-    })->name('tasks.create');
+    // Contacts - RESTful Routes
+    Route::get('/contacts', \App\Livewire\ContactManager::class)->name('contacts.index');
+    Route::get('/contacts/create', \App\Livewire\ContactManager::class)->name('contacts.create')->defaults('action', 'create');
+    Route::get('/contacts/{contact}', \App\Livewire\ContactManager::class)->name('contacts.show')->defaults('action', 'show');
+    Route::get('/contacts/{contact}/edit', \App\Livewire\ContactManager::class)->name('contacts.edit')->defaults('action', 'edit');
+    
+    // Deals - RESTful Routes
+    Route::get('/deals', \App\Livewire\DealManager::class)->name('deals.index');
+    Route::get('/deals/create', \App\Livewire\DealManager::class)->name('deals.create')->defaults('action', 'create');
+    Route::get('/deals/{deal}', \App\Livewire\DealManager::class)->name('deals.show')->defaults('action', 'show');
+    Route::get('/deals/{deal}/edit', \App\Livewire\DealManager::class)->name('deals.edit')->defaults('action', 'edit');
+    
+    // Tasks - RESTful Routes
+    Route::get('/tasks', \App\Livewire\TaskManager::class)->name('tasks.index');
+    Route::get('/tasks/create', \App\Livewire\TaskManager::class)->name('tasks.create')->defaults('action', 'create');
+    Route::get('/tasks/{task}', \App\Livewire\TaskManager::class)->name('tasks.show')->defaults('action', 'show');
+    Route::get('/tasks/{task}/edit', \App\Livewire\TaskManager::class)->name('tasks.edit')->defaults('action', 'edit');
 
     // Communication Hub Routes
     Route::get('/communications', CommunicationHub::class)->name('communications.index');

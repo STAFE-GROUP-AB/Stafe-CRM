@@ -67,7 +67,7 @@ class StalledCustomers extends Component
             })->count(),
             'never_contacted' => Contact::whereNull('last_contacted_at')->count(),
             'avg_days_since_contact' => Contact::whereNotNull('last_contacted_at')
-                ->selectRaw('AVG(CAST(julianday("now") - julianday(last_contacted_at) AS INTEGER)) as avg_days')
+                ->selectRaw('AVG(DATEDIFF(NOW(), last_contacted_at)) as avg_days')
                 ->value('avg_days') ?? 0,
         ];
 

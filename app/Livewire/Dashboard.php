@@ -60,6 +60,16 @@ class Dashboard extends Component
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
+        
+        $recent_companies = Company::with('owner')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+        
+        $recent_contacts = Contact::with(['company', 'owner'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
 
         // Analytics for charts
         $deal_analytics = Deal::selectRaw('pipeline_stage_id, COUNT(*) as count, SUM(value) as total_value')
@@ -80,6 +90,8 @@ class Dashboard extends Component
             'upcoming_tasks' => $upcoming_tasks,
             'recent_emails' => $recent_emails,
             'recent_activity' => $recent_activity,
+            'recent_companies' => $recent_companies,
+            'recent_contacts' => $recent_contacts,
             'deal_analytics' => $deal_analytics,
             'revenue_trends' => $revenue_trends,
         ])->layout('layouts.app');

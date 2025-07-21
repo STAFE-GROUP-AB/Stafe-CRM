@@ -55,8 +55,9 @@ class CommunicationHub extends Component
     {
         $communications = $this->getCommunications();
         $stats = $this->getCommunicationStats();
-        $contacts = Contact::select('id', 'name', 'phone', 'email')
-            ->orderBy('name')
+        $contacts = Contact::select('id', 'first_name', 'last_name', 'phone', 'email')
+            ->orderBy('first_name')
+            ->orderBy('last_name')
             ->limit(100)
             ->get();
 

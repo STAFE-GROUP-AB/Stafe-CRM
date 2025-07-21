@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('tags')->nullable();
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('category_id')->nullable()->constrained('sales_content_categories')->onDelete('set null');
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->integer('download_count')->default(0);
             $table->integer('view_count')->default(0);
             $table->decimal('average_rating', 3, 2)->default(0);

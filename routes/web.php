@@ -71,6 +71,28 @@ Route::middleware('auth')->group(function () {
     // Communication Hub Routes
     Route::get('/communications', CommunicationHub::class)->name('communications.index');
     Route::get('/communications/chat/{sessionId?}', LiveChat::class)->name('communications.chat');
+    
+    // Phase 2 Features Routes
+    // Email Integration
+    Route::get('/emails', \App\Livewire\EmailManager::class)->name('emails.index');
+    Route::get('/emails/compose', \App\Livewire\EmailManager::class)->name('emails.compose')->defaults('action', 'compose');
+    Route::get('/emails/{email}', \App\Livewire\EmailManager::class)->name('emails.show')->defaults('action', 'show');
+    
+    // Team Collaboration
+    Route::get('/teams', \App\Livewire\TeamManager::class)->name('teams.index');
+    Route::get('/teams/create', \App\Livewire\TeamManager::class)->name('teams.create')->defaults('action', 'create');
+    Route::get('/teams/{team}', \App\Livewire\TeamManager::class)->name('teams.show')->defaults('action', 'show');
+    
+    // Advanced Reporting & Analytics
+    Route::get('/reports', \App\Livewire\ReportManager::class)->name('reports.index');
+    Route::get('/reports/create', \App\Livewire\ReportManager::class)->name('reports.create')->defaults('action', 'create');
+    Route::get('/reports/{report}', \App\Livewire\ReportManager::class)->name('reports.show')->defaults('action', 'show');
+    
+    // Import/Export Functionality
+    Route::get('/import-export', \App\Livewire\ImportExportManager::class)->name('import-export.index');
+    
+    // Advanced Search & Filtering
+    Route::get('/search', \App\Livewire\SearchManager::class)->name('search.index');
 });
 
 // Chat Widget Routes (public)

@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/ai/lead-scoring', LeadScoringDashboard::class)->name('ai.lead-scoring');
     Route::get('/ai/keys', \App\Livewire\UserAiKeyManager::class)->name('ai.keys');
     
+    // Phase 3 Dashboard
+    Route::get('/phase3', \App\Livewire\Phase3Dashboard::class)->name('phase3.dashboard');
+    
     // Stalled Customers Feature
     Route::get('/stalled-customers', \App\Livewire\StalledCustomers::class)->name('stalled-customers');
     
@@ -71,6 +74,47 @@ Route::middleware('auth')->group(function () {
     // Communication Hub Routes
     Route::get('/communications', CommunicationHub::class)->name('communications.index');
     Route::get('/communications/chat/{sessionId?}', LiveChat::class)->name('communications.chat');
+
+    // Phase 3: Advanced Automation Workflows
+    Route::prefix('workflows')->name('workflows.')->group(function () {
+        Route::get('/', [App\Http\Controllers\WorkflowController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\WorkflowController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\WorkflowController::class, 'store'])->name('store');
+        Route::get('/{workflow}', [App\Http\Controllers\WorkflowController::class, 'show'])->name('show');
+        Route::get('/{workflow}/edit', [App\Http\Controllers\WorkflowController::class, 'edit'])->name('edit');
+        Route::put('/{workflow}', [App\Http\Controllers\WorkflowController::class, 'update'])->name('update');
+        Route::delete('/{workflow}', [App\Http\Controllers\WorkflowController::class, 'destroy'])->name('destroy');
+        Route::post('/{workflow}/execute', [App\Http\Controllers\WorkflowController::class, 'execute'])->name('execute');
+    });
+
+    // Phase 3: Integration Marketplace
+    Route::prefix('integrations')->name('integrations.')->group(function () {
+        Route::get('/', [App\Http\Controllers\IntegrationController::class, 'index'])->name('index');
+        Route::get('/{integration}', [App\Http\Controllers\IntegrationController::class, 'show'])->name('show');
+        Route::post('/{integration}/install', [App\Http\Controllers\IntegrationController::class, 'install'])->name('install');
+        
+        Route::prefix('connections')->name('connections.')->group(function () {
+            Route::get('/', [App\Http\Controllers\IntegrationController::class, 'connections'])->name('index');
+            Route::get('/{connection}', [App\Http\Controllers\IntegrationController::class, 'showConnection'])->name('show');
+            Route::put('/{connection}', [App\Http\Controllers\IntegrationController::class, 'updateConnection'])->name('update');
+            Route::post('/{connection}/test', [App\Http\Controllers\IntegrationController::class, 'testConnection'])->name('test');
+            Route::post('/{connection}/sync', [App\Http\Controllers\IntegrationController::class, 'syncConnection'])->name('sync');
+            Route::delete('/{connection}', [App\Http\Controllers\IntegrationController::class, 'destroyConnection'])->name('destroy');
+        });
+    });
+
+    // Phase 3: Advanced Permissions & Roles
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('roles', App\Http\Controllers\RoleController::class);
+        Route::resource('permissions', App\Http\Controllers\PermissionController::class);
+        
+        // Tenant Management
+        Route::resource('tenants', App\Http\Controllers\TenantController::class);
+        Route::get('/tenants/{tenant}/users', [App\Http\Controllers\TenantController::class, 'users'])->name('tenants.users');
+        Route::post('/tenants/{tenant}/users', [App\Http\Controllers\TenantController::class, 'addUser'])->name('tenants.users.add');
+        Route::delete('/tenants/{tenant}/users/{user}', [App\Http\Controllers\TenantController::class, 'removeUser'])->name('tenants.users.remove');
+        Route::put('/tenants/{tenant}/users/{user}', [App\Http\Controllers\TenantController::class, 'updateUserRole'])->name('tenants.users.update');
+    });
 });
 
 // Chat Widget Routes (public)

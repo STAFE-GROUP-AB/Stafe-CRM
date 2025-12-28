@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('team_members', function (Blueprint $table) {
+        Schema::create('team_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('role')->default('member'); // owner, admin, member
+            $table->string('role')->default('member'); // owner, admin, member (Jetstream compatible)
             $table->json('permissions')->nullable(); // Specific permissions for this user
             $table->boolean('is_active')->default(true);
             $table->timestamp('joined_at')->nullable();
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('team_members');
+        Schema::dropIfExists('team_user');
     }
 };

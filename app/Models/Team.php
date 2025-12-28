@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Jetstream\Events\TeamCreated;
+use Laravel\Jetstream\Events\TeamDeleted;
+use Laravel\Jetstream\Events\TeamUpdated;
+use Laravel\Jetstream\Team as JetstreamTeam;
 
-class Team extends Model
+class Team extends JetstreamTeam
 {
     use HasFactory;
 
@@ -16,16 +19,36 @@ class Team extends Model
         'slug',
         'description',
         'is_active',
-        'owner_id',
+        'user_id',
+        'personal_team',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'personal_team' => 'boolean',
     ];
 
+    /**
+     * The event map for the model.
+     *
+     * @var array<string, class-string>
+     */
+    protected $dispatchesEvents = [
+        'created' => TeamCreated::class,
+        'updated' => TeamUpdated::class,
+        'deleted' => TeamDeleted::class,
+    ];
+
+    // Alias owner() to use user_id for Jetstream compatibility
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Keep backward compatibility with old references
+    public function getOwnerIdAttribute()
+    {
+        return $this->user_id;
     }
 
     public function members(): HasMany

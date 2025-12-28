@@ -10,6 +10,13 @@ class TeamMember extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'team_user';
+
     protected $fillable = [
         'team_id',
         'user_id',

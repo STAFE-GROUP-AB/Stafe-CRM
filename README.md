@@ -1,6 +1,29 @@
 # Stafe CRM
 
-A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS, Alpine.js, Livewire, Laravel). Designed with simplicity and power in mind, following Basecamp's philosophy of clean, intuitive design.
+A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS, Alpine.js, Livewire, Laravel) powered by Laravel Jetstream. Designed with simplicity and power in mind, following Basecamp's philosophy of clean, intuitive design.
+
+## 🚀 New in 2026: Jetstream Integration
+
+### ⚡ Enhanced Authentication & Security
+- **Two-Factor Authentication (2FA)** - Enhanced security with time-based one-time passwords
+- **Profile Photo Management** - Professional avatar uploads with automatic optimization
+- **API Token Management** - Create and manage personal access tokens for API integration
+- **Session Management** - View and logout other browser sessions for security
+- **Password Reset & Email Verification** - Complete authentication flows built-in
+
+### 👥 Advanced Team Management
+- **Multi-Team Support** - Users can belong to multiple teams with easy switching
+- **Team Invitations** - Invite members via email with role assignments
+- **Personal Teams** - Each user gets a personal team for individual work
+- **Team-Based Permissions** - Granular access control within teams
+- **Team Settings** - Manage team name, members, and configuration
+
+### 🎨 Modern UI/UX
+- **Dark Mode Support** - Beautiful dark theme for late-night CRM work
+- **Responsive Design** - Seamless experience across desktop, tablet, and mobile
+- **Tailwind CSS 4.0** - Latest utility-first CSS framework
+- **Interactive Components** - Smooth animations and transitions throughout
+- **Professional Dashboard** - Feature-rich welcome screen with quick access to all modules
 
 ## Features
 
@@ -190,8 +213,11 @@ A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS
 ## Technology Stack
 
 - **Laravel 12** - Modern PHP framework with advanced features
-- **Livewire 3.6** - Dynamic, reactive components for seamless interactivity
-- **Alpine.js** - Lightweight JavaScript framework for enhanced UX
+- **Laravel Jetstream** - Robust authentication scaffolding with teams and 2FA
+- **Laravel Fortify** - Backend authentication services  
+- **Laravel Sanctum** - API token authentication for SPAs and mobile apps
+- **Livewire 3.7** - Dynamic, reactive components for seamless interactivity
+- **Alpine.js 3.14** - Lightweight JavaScript framework for enhanced UX
 - **Tailwind CSS 4.0** - Utility-first CSS framework for rapid development
 - **SQLite/MySQL/PostgreSQL** - Database flexibility for any deployment
 - **OpenAI Integration** - AI-powered features and intelligent automation

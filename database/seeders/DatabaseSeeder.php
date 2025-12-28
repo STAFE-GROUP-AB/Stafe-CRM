@@ -13,11 +13,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->withPersonalTeam()->create();
-
-        User::factory()->withPersonalTeam()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Create test user with personal team
+        $user = User::factory()->withPersonalTeam()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@stafe.com',
+            'password' => bcrypt('password'),
         ]);
+
+        // Seed all demo data
+        $this->call([
+            PipelineStageSeeder::class,
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            AiProvidersSeeder::class,
+            EmailTemplateSeeder::class,
+            IntegrationSeeder::class,
+            SubscriptionPlanSeeder::class,
+            DemoDataSeeder::class,
+            SampleContactsSeeder::class,
+        ]);
+
+        $this->command->info('✅ Database seeded successfully with demo data!');
+        $this->command->info('🔐 Login credentials:');
+        $this->command->info('   Email: admin@stafe.com');
+        $this->command->info('   Password: password');
     }
 }

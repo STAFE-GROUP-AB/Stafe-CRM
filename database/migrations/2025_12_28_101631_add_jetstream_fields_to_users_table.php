@@ -12,11 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('current_team_id')->nullable()->after('current_tenant_id');
-            $table->string('profile_photo_path', 2048)->nullable()->after('password');
-            $table->text('two_factor_secret')->nullable()->after('password');
-            $table->text('two_factor_recovery_codes')->nullable()->after('two_factor_secret');
-            $table->timestamp('two_factor_confirmed_at')->nullable()->after('two_factor_recovery_codes');
+            // Only add tenant support (team switcher already exists)
+            if (!Schema::hasColumn('users', 'current_tenant_id')) {
+                $table->foreignId('current_tenant_id')->nullable()->after('current_team_id');
+            }
+            
+            // Add two-factor authentication fields
+            if (!Schema::hasColumn('users', 'two_factor_secret')) {
+                $table->text('two_factor_secret')->nullable()->after('password');
+            }
+            if (!Schema::hasColumn('users', 'two_factor_recovery_codes')) {
+                $table->text('two_factor_recovery_codes')->nullable()->after('two_factor_secret');
+            }
+            if (!Schema::hasColumn('users', 'two_factor_confirmed_at')) {
+                $table->timestamp('two_factor_confirmed_at')->nullable()->after('two_factor_recovery_codes');
+            }
         });
     }
 
@@ -26,7 +36,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['current_team_id', 'profile_photo_path', 'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at']);
+            $table->dropColumn(['current_tenant_id', 'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at']);
         });
     }
 };

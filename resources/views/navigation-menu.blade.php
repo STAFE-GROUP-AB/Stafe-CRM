@@ -11,9 +11,25 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-2 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link href="{{ route('contacts.index') }}" :active="request()->routeIs('contacts.*')">
+                        {{ __('Contacts') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link href="{{ route('companies.index') }}" :active="request()->routeIs('companies.*')">
+                        {{ __('Companies') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link href="{{ route('deals.index') }}" :active="request()->routeIs('deals.*')">
+                        {{ __('Deals') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link href="{{ route('tasks.index') }}" :active="request()->routeIs('tasks.*')">
+                        {{ __('Tasks') }}
                     </x-nav-link>
                 </div>
             </div>

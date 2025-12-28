@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->index(); // Jetstream compatibility (alias for owner_id)
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
+            $table->boolean('personal_team')->default(false); // Jetstream requirement
             $table->boolean('is_active')->default(true);
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
+            
+            // Make user_id act as owner_id for backward compatibility
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

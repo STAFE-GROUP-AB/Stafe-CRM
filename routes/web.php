@@ -16,14 +16,20 @@ use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Livewire\Auth\RequestLoginOtp;
+use App\Livewire\Auth\VerifyLoginOtp;
+use App\Livewire\Auth\RequestRegistrationOtp;
+use App\Livewire\Auth\VerifyRegistrationOtp;
 
-// Authentication Routes
-Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login', [LoginController::class, 'login'])->name('login.post');
+// OTP Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('login', RequestLoginOtp::class)->name('login');
+    Route::get('login/verify', VerifyLoginOtp::class)->name('login.verify');
+    Route::get('register', RequestRegistrationOtp::class)->name('register');
+    Route::get('register/verify', VerifyRegistrationOtp::class)->name('register.verify');
+});
+
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-
-Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('register', [RegisterController::class, 'register'])->name('register.post');
 
 // Landing Pages (Public)
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -125,7 +131,7 @@ Route::middleware('auth')->group(function () {
     // Team Collaboration
     Route::get('/teams', \App\Livewire\TeamManager::class)->name('teams.index');
     Route::get('/teams/create', \App\Livewire\TeamManager::class)->name('teams.create')->defaults('action', 'create');
-    Route::get('/teams/{team}', \App\Livewire\TeamManager::class)->name('teams.show')->defaults('action', 'show');
+    // teams.show is handled by Jetstream (resources/views/teams/show.blade.php)
     
     // Advanced Reporting & Analytics
     Route::get('/reports', \App\Livewire\ReportManager::class)->name('reports.index');

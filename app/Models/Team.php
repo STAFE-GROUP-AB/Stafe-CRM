@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
@@ -14,6 +15,15 @@ class Team extends JetstreamTeam
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (Team $team) {
+            if (empty($team->slug)) {
+                $team->slug = Str::slug($team->name) . '-' . Str::random(6);
+            }
+        });
+    }
+
     protected $fillable = [
         'name',
         'slug',
@@ -21,11 +31,13 @@ class Team extends JetstreamTeam
         'is_active',
         'user_id',
         'personal_team',
+        'theme_settings',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'personal_team' => 'boolean',
+        'theme_settings' => 'array',
     ];
 
     /**

@@ -5,11 +5,15 @@ namespace App\Livewire;
 use App\Models\Contact;
 use App\Models\Company;
 use App\Models\User;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 
+#[Layout('layouts.app')]
+#[Title('Contacts')]
 class ContactManager extends Component
 {
     use WithPagination, WithFileUploads;

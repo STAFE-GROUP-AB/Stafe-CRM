@@ -7,10 +7,14 @@ use App\Models\User;
 use App\Models\Contact;
 use App\Models\Company;
 use App\Models\Deal;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Carbon\Carbon;
 
+#[Layout('layouts.app')]
+#[Title('Tasks')]
 class TaskManager extends Component
 {
     use WithPagination;

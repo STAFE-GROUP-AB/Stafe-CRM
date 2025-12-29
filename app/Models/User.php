@@ -34,6 +34,8 @@ class User extends Authenticatable
         'password',
         'current_tenant_id',
         'current_team_id',
+        'email_verified_at',
+        'last_login_at',
     ];
 
     /**
@@ -66,13 +68,14 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
     public function ownedTeams(): HasMany
     {
-        return $this->hasMany(Team::class, 'owner_id');
+        return $this->hasMany(Team::class, 'user_id');
     }
 
     public function teamMemberships(): HasMany
@@ -131,8 +134,12 @@ class User extends Authenticatable
     /**
      * Check if user belongs to specific team
      */
-    public function belongsToTeam(Team $team): bool
+    public function belongsToTeam(?Team $team): bool
     {
+        if (! $team) {
+            return false;
+        }
+
         return $this->activeTeamMemberships()
             ->where('team_id', $team->id)
             ->exists();
@@ -141,8 +148,12 @@ class User extends Authenticatable
     /**
      * Check if user has permission in team
      */
-    public function hasTeamPermission(Team $team, string $permission): bool
+    public function hasTeamPermission(?Team $team, string $permission): bool
     {
+        if (! $team) {
+            return false;
+        }
+
         $membership = $this->activeTeamMemberships()
             ->where('team_id', $team->id)
             ->first();

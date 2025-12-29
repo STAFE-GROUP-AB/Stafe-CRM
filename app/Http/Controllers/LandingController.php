@@ -9,9 +9,7 @@ class LandingController extends Controller
 {
     public function index()
     {
-        $plans = SubscriptionPlan::active()->orderBy('price')->get();
-        
-        return view('landing.index', compact('plans'));
+        return view('welcome');
     }
 
     public function pricing()

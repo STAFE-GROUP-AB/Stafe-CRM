@@ -7,10 +7,14 @@ use App\Models\Company;
 use App\Models\Contact;
 use App\Models\User;
 use App\Models\PipelineStage;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Carbon\Carbon;
 
+#[Layout('layouts.app')]
+#[Title('Deals')]
 class DealManager extends Component
 {
     use WithPagination;

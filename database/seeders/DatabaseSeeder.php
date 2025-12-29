@@ -13,12 +13,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create test user with personal team
-        $user = User::factory()->withPersonalTeam()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@stafe.com',
-            'password' => bcrypt('password'),
-        ]);
+        // Create test user with personal team (or get existing)
+        $user = User::where('email', 'admin@stafe.com')->first();
+
+        if (!$user) {
+            $user = User::factory()->withPersonalTeam()->create([
+                'name' => 'Admin User',
+                'email' => 'admin@stafe.com',
+                'password' => bcrypt('password'),
+            ]);
+        }
 
         // Seed all demo data
         $this->call([

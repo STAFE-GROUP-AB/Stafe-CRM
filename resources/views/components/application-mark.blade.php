@@ -1,4 +1,19 @@
 <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {{ $attributes }}>
-  <!-- S letter for Stafe -->
-  <path d="M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20 20-8.954 20-20S35.046 4 24 4zm6.5 30.5c-1.5 1.5-3.5 2.3-5.5 2.3-3 0-5.5-1.5-7-4l3-2c1 1.5 2.5 2.5 4 2.5 1.5 0 2.5-.5 3.5-1.5.5-.5.5-1 .5-1.5s-.5-1-1-1.5c-.5-.5-1.5-1-3-1.5-2-.5-3.5-1.5-4.5-2.5-1-1-1.5-2.5-1.5-4 0-2 .8-3.5 2.3-4.8 1.5-1.3 3.2-2 5.2-2 2.5 0 4.5 1 6 3l-3 2c-1-1.5-2-2-3-2-1 0-2 .3-2.5.8-.5.5-.8 1-.8 1.7 0 .5.3 1 .8 1.5.5.5 1.5 1 2.7 1.5 2 .5 3.5 1.5 4.5 2.5 1 1 1.5 2.5 1.5 4 0 2-.8 3.5-2.3 4.8z" fill="#10B981"/>
+    <!-- Background circle with gradient -->
+    <defs>
+        <linearGradient id="stafe-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#10B981"/>
+            <stop offset="100%" style="stop-color:#059669"/>
+        </linearGradient>
+    </defs>
+    <!-- Main circle -->
+    <circle cx="24" cy="24" r="22" fill="url(#stafe-gradient)"/>
+    <!-- Stylized S made of two curved strokes -->
+    <path d="M30 15c0 0-3-3-8-3-4 0-7 2.5-7 6 0 3 2 4.5 5 5.5l6 2c3 1 5 3 5 6 0 4-3.5 6.5-8 6.5-5 0-8-3-8-3"
+          stroke="#FEF3C7"
+          stroke-width="4"
+          stroke-linecap="round"
+          fill="none"/>
+    <!-- Yellow accent dot -->
+    <circle cx="36" cy="12" r="4" fill="#FCD34D"/>
 </svg>

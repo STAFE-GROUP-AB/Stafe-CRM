@@ -1,33 +1,32 @@
 <div>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Tasks') }}
+        </h2>
+    </x-slot>
+
+    @php
+        $primaryColor = team_theme()->primary();
+    @endphp
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
     {{-- List View --}}
     @if($view === 'list')
-        <div class="space-y-6">
-            {{-- Header --}}
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Tasks</h2>
-                <button wire:click="create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    New Task
-                </button>
-            </div>
-
-            {{-- Search and Filters --}}
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-                    <div class="md:col-span-2">
-                        <input type="text" wire:model.live="search" placeholder="Search tasks..." 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    </div>
-                    <div>
-                        <select wire:model.live="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            <option value="">All Statuses</option>
-                            @foreach($statuses as $key => $status)
-                                <option value="{{ $key }}">{{ $status }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+        <x-data-table>
+            <x-filter-bar :columns="6">
+                <div class="md:col-span-2">
+                    <x-input wire:model.live="search" type="text" placeholder="{{ __('Search tasks...') }}" class="w-full" />
+                </div>
+                <div>
+                    <select wire:model.live="statusFilter" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-{{ $primaryColor }}-500 focus:ring-{{ $primaryColor }}-500 sm:text-sm">
+                        <option value="">{{ __('All Statuses') }}</option>
+                        @foreach($statuses as $key => $status)
+                            <option value="{{ $key }}">{{ $status }}</option>
+                        @endforeach
+                    </select>
+                </div>
                     <div>
                         <select wire:model.live="priorityFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <option value="">All Priorities</option>
@@ -44,22 +43,23 @@
                             @endforeach
                         </select>
                     </div>
-                    <div>
-                        <select wire:model.live="assignedToFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            <option value="">All Assignees</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                <div>
+                    <select wire:model.live="assignedToFilter" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-{{ $primaryColor }}-500 focus:ring-{{ $primaryColor }}-500 sm:text-sm">
+                        <option value="">{{ __('All Assignees') }}</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="mt-4">
-                    <label class="flex items-center">
-                        <input type="checkbox" wire:model.live="overdueOnly" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Show only overdue tasks</span>
-                    </label>
+                <div class="flex items-center justify-end">
+                    <x-button wire:click="create">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        {{ __('New Task') }}
+                    </x-button>
                 </div>
-            </div>
+            </x-filter-bar>
 
             {{-- Bulk Actions --}}
             @if(count($selectedIds) > 0)
@@ -216,10 +216,10 @@
             </div>
 
             {{-- Pagination --}}
-            <div>
+            <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
                 {{ $tasks->links() }}
             </div>
-        </div>
+        </x-data-table>
     @endif
 
     {{-- Create/Edit View --}}
@@ -538,6 +538,9 @@
             </div>
         </div>
     @endif
+
+        </div>
+    </div>
 
     {{-- Delete Modal --}}
     @if($showDeleteModal)

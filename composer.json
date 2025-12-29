@@ -52,6 +52,13 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
+        "post-install-cmd": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php -r \"is_dir('storage/framework/cache/data') || mkdir('storage/framework/cache/data', 0775, true);\"",
+            "@php -r \"is_dir('storage/framework/sessions') || mkdir('storage/framework/sessions', 0775, true);\"",
+            "@php -r \"is_dir('storage/framework/views') || mkdir('storage/framework/views', 0775, true);\"",
+            "@php -r \"is_dir('bootstrap/cache') || mkdir('bootstrap/cache', 0775, true);\""
+        ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],

@@ -1,21 +1,32 @@
-<div>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Tasks') }}
-        </h2>
-    </x-slot>
+<div class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
     @php
         $primaryColor = team_theme()->primary();
     @endphp
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
     {{-- List View --}}
     @if($view === 'list')
+        <!-- Page Header -->
+        <div class="border-b border-amber-200/50 dark:border-gray-700 pb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-black text-stone-900 dark:text-white tracking-tight">Tasks</h1>
+                    <p class="mt-1 text-sm text-stone-600 dark:text-gray-400">Manage your tasks, meetings, and follow-ups.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <x-button wire:click="create">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        {{ __('New Task') }}
+                    </x-button>
+                </div>
+            </div>
+        </div>
+
         <x-data-table>
-            <x-filter-bar :columns="6">
+            <x-filter-bar :columns="5">
                 <div class="md:col-span-2">
                     <x-input wire:model.live="search" type="text" placeholder="{{ __('Search tasks...') }}" class="w-full" />
                 </div>
@@ -50,14 +61,6 @@
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
                     </select>
-                </div>
-                <div class="flex items-center justify-end">
-                    <x-button wire:click="create">
-                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        {{ __('New Task') }}
-                    </x-button>
                 </div>
             </x-filter-bar>
 
@@ -539,9 +542,6 @@
         </div>
     @endif
 
-        </div>
-    </div>
-
     {{-- Delete Modal --}}
     @if($showDeleteModal)
         <div class="fixed z-10 inset-0 overflow-y-auto">
@@ -619,4 +619,6 @@
             </div>
         </div>
     @endif
+
+    </div>
 </div>

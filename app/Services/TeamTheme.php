@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Auth;
 class TeamTheme
 {
     public const COLOR_PRESETS = [
+        'stafe' => [
+            'name' => 'Stafe (Default)',
+            'primary' => 'emerald',
+            'primary_hover' => 'emerald',
+            'accent' => 'yellow',
+            'description' => 'Emerald buttons on warm amber background',
+        ],
         'emerald' => [
             'name' => 'Emerald',
             'primary' => 'emerald',
@@ -58,7 +65,7 @@ class TeamTheme
         ],
     ];
 
-    public const DEFAULT_PRESET = 'emerald';
+    public const DEFAULT_PRESET = 'stafe';
 
     protected ?Team $team;
     protected array $preset;

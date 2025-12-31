@@ -169,7 +169,7 @@
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid md:grid-cols-3 gap-6">
                 <!-- Self-Hosted -->
                 <div class="bg-white rounded-2xl p-8 border-2 border-stone-200">
                     <div class="text-sm font-bold text-stone-500 uppercase tracking-wider mb-2">Self-Hosted</div>
@@ -189,14 +189,14 @@
                     </ul>
                 </div>
 
-                <!-- Stafe Cloud -->
+                <!-- Stafe Cloud - Own AI Keys -->
                 <div class="bg-stone-900 rounded-2xl p-8 border-2 border-stone-900 relative">
                     <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-400 text-stone-900 text-xs font-black uppercase tracking-wider rounded-full">
                         Recommended
                     </div>
                     <div class="text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">Stafe Cloud</div>
-                    <div class="text-4xl font-black text-white mb-1">$49<span class="text-lg font-semibold text-stone-400">/mo</span></div>
-                    <div class="text-stone-400 mb-6">Flat rate. No per-seat pricing.</div>
+                    <div class="text-4xl font-black text-white mb-1">$99<span class="text-lg font-semibold text-stone-400">/mo</span></div>
+                    <div class="text-stone-400 mb-6">Bring your own AI keys</div>
 
                     <a href="{{ route('register') }}" class="block w-full text-center px-6 py-3 text-base font-black text-stone-900 bg-yellow-400 rounded-full hover:bg-yellow-300 transition-all mb-8">
                         Start 14-day free trial
@@ -205,9 +205,31 @@
                     <ul class="space-y-4 text-sm">
                         <li class="flex items-start"><svg class="w-5 h-5 text-emerald-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-300">100% open source code</span></li>
                         <li class="flex items-start"><svg class="w-5 h-5 text-emerald-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-300">All enterprise features</span></li>
+                        <li class="flex items-start"><svg class="w-5 h-5 text-yellow-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-white font-bold">Use your own AI keys</span></li>
                         <li class="flex items-start"><svg class="w-5 h-5 text-yellow-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-white font-bold">Automatic updates</span></li>
                         <li class="flex items-start"><svg class="w-5 h-5 text-yellow-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-white font-bold">Daily automated backups</span></li>
                         <li class="flex items-start"><svg class="w-5 h-5 text-yellow-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-white font-bold">Priority email support</span></li>
+                    </ul>
+                </div>
+
+                <!-- Stafe Cloud - Full Service -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-emerald-600">
+                    <div class="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-2">Stafe Cloud Pro</div>
+                    <div class="text-4xl font-black text-stone-900 mb-1">$299<span class="text-lg font-semibold text-stone-500">/mo</span></div>
+                    <div class="text-stone-600 mb-6">Includes AI credits</div>
+
+                    <a href="{{ route('register') }}" class="block w-full text-center px-6 py-3 text-base font-bold text-white bg-emerald-600 rounded-full hover:bg-emerald-700 transition-all mb-8">
+                        Start 14-day free trial
+                    </a>
+
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-700">100% open source code</span></li>
+                        <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-700">All enterprise features</span></li>
+                        <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-700 font-bold">AI credits included</span></li>
+                        <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-700 font-bold">No AI setup needed</span></li>
+                        <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-700 font-bold">Automatic updates</span></li>
+                        <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-700 font-bold">Daily automated backups</span></li>
+                        <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg><span class="text-stone-700 font-bold">Priority email support</span></li>
                     </ul>
                 </div>
             </div>
@@ -243,7 +265,7 @@
                     </div>
                 </div>
                 <div class="flex justify-center gap-8 mt-6 text-sm font-bold">
-                    <div class="flex items-center"><span class="w-4 h-1 bg-yellow-400 rounded mr-2"></span><span class="text-stone-300">Stafe ($49 flat)</span></div>
+                    <div class="flex items-center"><span class="w-4 h-1 bg-yellow-400 rounded mr-2"></span><span class="text-stone-300">Stafe ($99-$299 flat)</span></div>
                     <div class="flex items-center"><span class="w-4 h-1 bg-red-500 rounded mr-2"></span><span class="text-stone-400">Others</span></div>
                 </div>
             </div>

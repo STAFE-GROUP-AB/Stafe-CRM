@@ -1,6 +1,6 @@
 # Stafe CRM
 
-A comprehensive CRM built with the Laravel TALL stack (Tailwind CSS, Alpine.js, Livewire, Laravel) powered by Laravel Jetstream. Designed with simplicity and power in mind, following Basecamp's philosophy of clean, intuitive design.
+A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS, Alpine.js, Livewire, Laravel) powered by Laravel Jetstream. Designed with simplicity and power in mind, following Basecamp's philosophy of clean, intuitive design.
 
 ## 📜 License
 

@@ -2,6 +2,18 @@
 
 A comprehensive, open-source CRM built with the Laravel TALL stack (Tailwind CSS, Alpine.js, Livewire, Laravel) powered by Laravel Jetstream. Designed with simplicity and power in mind, following Basecamp's philosophy of clean, intuitive design.
 
+## 📜 License
+
+**This project is licensed under the [O'Saasy License](https://osaasy.dev/).**
+
+The O'Saasy License allows you to:
+- ✅ Use, modify, and self-host the software freely
+- ✅ Study the code and learn from it
+- ✅ Contribute improvements and fixes
+- ❌ Offer the software as a commercial hosted SaaS service (this right is reserved for Stafe Group AB)
+
+See the [LICENSE](LICENSE) file for full details.
+
 ## 🚀 New in 2026: Jetstream Integration
 
 ### ⚡ Enhanced Authentication & Security
@@ -599,7 +611,7 @@ composer test
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the O'Saasy License - see the [LICENSE](LICENSE) file for details or visit [https://osaasy.dev/](https://osaasy.dev/) for more information about the license.
 
 ## Acknowledgments
 

@@ -756,3 +756,5 @@ Some features have frameworks in place but need completion:
 
 **Built with ❤️ by the Stafe Development Team from Sweden**
 
+*Last updated: January 2026*
+

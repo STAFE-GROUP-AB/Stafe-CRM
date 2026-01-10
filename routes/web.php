@@ -16,6 +16,7 @@ use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\SitemapController;
 use App\Livewire\Auth\RequestLoginOtp;
 use App\Livewire\Auth\VerifyLoginOtp;
 use App\Livewire\Auth\RequestRegistrationOtp;
@@ -36,6 +37,9 @@ Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/features', [LandingController::class, 'features'])->name('landing.features');
 Route::get('/pricing', [LandingController::class, 'pricing'])->name('landing.pricing');
 Route::get('/contact', [LandingController::class, 'contact'])->name('landing.contact');
+
+// Sitemap (Public)
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Dashboard (Protected)
 Route::middleware('auth')->group(function () {

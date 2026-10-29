@@ -2,16 +2,20 @@
 
 namespace App\Livewire;
 
-use App\Models\Deal;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\User;
+use App\Models\Deal;
 use App\Models\PipelineStage;
+use App\Models\SalesPlaybook;
+use App\Models\User;
+use App\Services\PlaybookExecutionService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[Layout('layouts.app')]
 #[Title('Deals')]
@@ -21,43 +25,80 @@ class DealManager extends Component
 
     // View state
     public $view = 'list'; // list, create, edit, show
+
     public $selectedDeal = null;
-    
+
     // Search and filters
     public $search = '';
+
     public $statusFilter = '';
+
     public $stageFilter = '';
+
     public $ownerFilter = '';
+
     public $companyFilter = '';
+
     public $perPage = 10;
-    
+
     // Form fields
     public $name = '';
+
     public $description = '';
+
     public $value = '';
+
     public $currency = 'USD';
+
     public $probability = 20;
+
     public $expected_close_date = '';
+
     public $actual_close_date = '';
+
     public $status = 'open';
+
     public $pipeline_stage_id = '';
+
     public $company_id = '';
+
     public $contact_id = '';
+
     public $source = '';
+
     public $type = '';
+
     public $close_reason = '';
+
     public $custom_fields = [];
+
     public $owner_id = '';
-    
+
     // Bulk operations
     public $selectAll = false;
+
     public $selectedIds = [];
+
     public $bulkAction = '';
-    
+
     // Modal states
     public $showDeleteModal = false;
+
     public $showBulkDeleteModal = false;
+
     public $dealToDelete = null;
+
+    // Playbook modal
+    public $showPlaybookModal = false;
+
+    public $selectedPlaybookId = '';
+
+    protected PlaybookExecutionService $playbookService;
+
+    public function boot(PlaybookExecutionService $playbookService): void
+    {
+        $this->playbookService = $playbookService;
+    }
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -90,14 +131,14 @@ class DealManager extends Component
     {
         $this->owner_id = auth()->id();
         $this->expected_close_date = Carbon::now()->addMonth()->format('Y-m-d');
-        
+
         // Set default pipeline stage if available
         $defaultStage = PipelineStage::active()->ordered()->first();
         if ($defaultStage) {
             $this->pipeline_stage_id = $defaultStage->id;
             $this->probability = $defaultStage->default_probability ?? 20;
         }
-        
+
         // Check if we should open create form
         if (request()->query('action') === 'create') {
             $this->create();
@@ -116,6 +157,9 @@ class DealManager extends Component
             'sources' => $this->getSources(),
             'types' => $this->getTypes(),
             'currencies' => $this->getCurrencies(),
+            'playbooks' => SalesPlaybook::where('status', 'published')
+                ->orderBy('title')
+                ->get(['id', 'title', 'type', 'difficulty_level', 'estimated_duration']),
         ];
 
         return view('livewire.deal-manager', $data);
@@ -130,8 +174,8 @@ class DealManager extends Component
         return Deal::with(['company', 'contact', 'owner', 'pipelineStage'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%');
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('description', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->statusFilter, function ($query) {
@@ -162,7 +206,7 @@ class DealManager extends Component
         $this->validate();
 
         $data = $this->getFormData();
-        
+
         // Generate slug from name
         $data['slug'] = \Str::slug($this->name);
 
@@ -170,7 +214,7 @@ class DealManager extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Deal created successfully!'
+            'message' => 'Deal created successfully!',
         ]);
 
         $this->view = 'list';
@@ -179,9 +223,50 @@ class DealManager extends Component
 
     public function show($id)
     {
-        $this->selectedDeal = Deal::with(['company', 'contact', 'owner', 'pipelineStage', 'tasks', 'notes', 'emails', 'activityLogs'])
-            ->findOrFail($id);
+        $this->selectedDeal = Deal::with([
+            'company',
+            'contact',
+            'owner',
+            'pipelineStage',
+            'tasks',
+            'notes',
+            'emails',
+            'activityLogs',
+            'playbookExecutions.playbook',
+            'activePlaybookExecutions.playbook',
+        ])->findOrFail($id);
         $this->view = 'show';
+    }
+
+    public function openPlaybookModal(): void
+    {
+        $this->selectedPlaybookId = '';
+        $this->showPlaybookModal = true;
+    }
+
+    public function startPlaybook()
+    {
+        $this->validate([
+            'selectedPlaybookId' => 'required|exists:sales_playbooks,id',
+        ]);
+
+        $playbook = SalesPlaybook::findOrFail($this->selectedPlaybookId);
+
+        $execution = $this->playbookService->startExecution(
+            $playbook,
+            auth()->user(),
+            $this->selectedDeal,
+            $this->selectedDeal->contact
+        );
+
+        $this->showPlaybookModal = false;
+
+        return redirect()->route('sales-enablement.playbook-execution', $execution->id);
+    }
+
+    public function continuePlaybookExecution(int $executionId)
+    {
+        return redirect()->route('sales-enablement.playbook-execution', $executionId);
     }
 
     public function edit($id)
@@ -197,7 +282,7 @@ class DealManager extends Component
         $this->validate();
 
         $data = $this->getFormData();
-        
+
         // Update slug if name changed
         if ($this->selectedDeal->name !== $this->name) {
             $data['slug'] = \Str::slug($this->name);
@@ -207,7 +292,7 @@ class DealManager extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Deal updated successfully!'
+            'message' => 'Deal updated successfully!',
         ]);
 
         $this->view = 'show';
@@ -224,16 +309,16 @@ class DealManager extends Component
     {
         if ($this->dealToDelete) {
             $this->dealToDelete->delete();
-            
+
             $this->dispatch('notify', [
                 'type' => 'success',
-                'message' => 'Deal deleted successfully!'
+                'message' => 'Deal deleted successfully!',
             ]);
         }
 
         $this->showDeleteModal = false;
         $this->dealToDelete = null;
-        
+
         if ($this->view === 'show' || $this->view === 'edit') {
             $this->view = 'list';
         }
@@ -267,7 +352,7 @@ class DealManager extends Component
         if ($stage && $stage->default_probability) {
             $this->probability = $stage->default_probability;
         }
-        
+
         // Update status if stage is closed
         if ($stage && $stage->is_closed) {
             $this->status = $stage->is_won ? 'won' : 'lost';
@@ -281,8 +366,9 @@ class DealManager extends Component
         if (empty($this->selectedIds)) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Please select at least one deal.'
+                'message' => 'Please select at least one deal.',
             ]);
+
             return;
         }
 
@@ -308,7 +394,7 @@ class DealManager extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => count($this->selectedIds) . ' deals deleted successfully!'
+            'message' => count($this->selectedIds).' deals deleted successfully!',
         ]);
 
         $this->showBulkDeleteModal = false;
@@ -316,13 +402,126 @@ class DealManager extends Component
         $this->selectAll = false;
     }
 
-    public function exportSelected()
+    public function exportSelected(): StreamedResponse
     {
-        // TODO: Implement export functionality
-        $this->dispatch('notify', [
-            'type' => 'info',
-            'message' => 'Export functionality coming soon!'
+        $deals = $this->getDealsForExport();
+
+        if ($deals->isEmpty()) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'No deals to export.',
+            ]);
+
+            return response()->streamDownload(function () {
+                // Empty response
+            }, 'deals.csv');
+        }
+
+        $filename = 'deals-export-'.Carbon::now()->format('Y-m-d-His').'.csv';
+
+        return response()->streamDownload(function () use ($deals) {
+            $handle = fopen('php://output', 'w');
+
+            // Add UTF-8 BOM for Excel compatibility
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            // Write headers
+            fputcsv($handle, $this->getCsvHeaders());
+
+            // Write data rows
+            foreach ($deals as $deal) {
+                fputcsv($handle, $this->formatDealForCsv($deal));
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
+    }
+
+    private function getDealsForExport(): Collection
+    {
+        $query = Deal::with(['company', 'contact', 'owner', 'pipelineStage']);
+
+        // If specific deals are selected, export only those
+        if (! empty($this->selectedIds)) {
+            return $query->whereIn('id', $this->selectedIds)->get();
+        }
+
+        // Otherwise, export all deals matching current filters
+        return $query
+            ->when($this->search, function ($q) {
+                $q->where(function ($query) {
+                    $query->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('description', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->when($this->statusFilter, function ($q) {
+                $q->where('status', $this->statusFilter);
+            })
+            ->when($this->stageFilter, function ($q) {
+                $q->where('pipeline_stage_id', $this->stageFilter);
+            })
+            ->when($this->ownerFilter, function ($q) {
+                $q->where('owner_id', $this->ownerFilter);
+            })
+            ->when($this->companyFilter, function ($q) {
+                $q->where('company_id', $this->companyFilter);
+            })
+            ->latest()
+            ->get();
+    }
+
+    /** @return array<int, string> */
+    private function getCsvHeaders(): array
+    {
+        return [
+            'Name',
+            'Value',
+            'Currency',
+            'Probability',
+            'Status',
+            'Pipeline Stage',
+            'Company',
+            'Contact',
+            'Expected Close Date',
+            'Actual Close Date',
+            'Source',
+            'Type',
+            'Owner',
+            'Created At',
+        ];
+    }
+
+    /** @return array<int, string|null> */
+    private function formatDealForCsv(Deal $deal): array
+    {
+        return [
+            $deal->name,
+            number_format((float) $deal->value, 2, '.', ''),
+            $deal->currency ?? 'USD',
+            $deal->probability.'%',
+            ucfirst($deal->status),
+            $deal->pipelineStage?->name ?? '',
+            $deal->company?->name ?? '',
+            $this->formatContactName($deal->contact),
+            $deal->expected_close_date?->format('Y-m-d') ?? '',
+            $deal->actual_close_date?->format('Y-m-d') ?? '',
+            $deal->source ?? '',
+            $deal->type ?? '',
+            $deal->owner?->name ?? '',
+            $deal->created_at?->format('Y-m-d H:i:s') ?? '',
+        ];
+    }
+
+    private function formatContactName(?Contact $contact): string
+    {
+        if (! $contact) {
+            return '';
+        }
+
+        return trim("{$contact->first_name} {$contact->last_name}");
     }
 
     private function resetForm()
@@ -331,22 +530,22 @@ class DealManager extends Component
             'name', 'description', 'value', 'currency', 'probability',
             'expected_close_date', 'actual_close_date', 'status',
             'pipeline_stage_id', 'company_id', 'contact_id', 'source',
-            'type', 'close_reason', 'custom_fields'
+            'type', 'close_reason', 'custom_fields',
         ]);
-        
+
         $this->owner_id = auth()->id();
         $this->currency = 'USD';
         $this->probability = 20;
         $this->status = 'open';
         $this->expected_close_date = Carbon::now()->addMonth()->format('Y-m-d');
-        
+
         // Set default pipeline stage
         $defaultStage = PipelineStage::active()->ordered()->first();
         if ($defaultStage) {
             $this->pipeline_stage_id = $defaultStage->id;
             $this->probability = $defaultStage->default_probability ?? 20;
         }
-        
+
         $this->resetValidation();
     }
 
@@ -412,7 +611,7 @@ class DealManager extends Component
             'Trade Show',
             'Cold Call',
             'Advertisement',
-            'Other'
+            'Other',
         ];
     }
 

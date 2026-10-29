@@ -1,10 +1,10 @@
 <div class="space-y-6">
     <!-- Dashboard Header -->
-    <div class="bg-white shadow-sm rounded-lg p-6">
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-xl font-semibold text-gray-900">Dashboard Builder</h2>
-                <p class="text-gray-600">Create and manage interactive dashboards</p>
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Dashboard Builder</h2>
+                <p class="text-gray-600 dark:text-gray-400">Create and manage interactive dashboards</p>
             </div>
             <div class="flex space-x-3">
                 <button wire:click="$set('showWidgetModal', true)" 
@@ -29,33 +29,33 @@
 
     <!-- Dashboard Configuration -->
     @if(!$isEditing)
-    <div class="bg-white shadow-sm rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Dashboard Configuration</h3>
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Dashboard Configuration</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="dashboardName" class="block text-sm font-medium text-gray-700">Dashboard Name</label>
-                <input wire:model="dashboardName" type="text" id="dashboardName" 
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <label for="dashboardName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dashboard Name</label>
+                <input wire:model="dashboardName" type="text" id="dashboardName"
+                       class="mt-1 block w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
             </div>
             <div>
-                <label for="dashboardType" class="block text-sm font-medium text-gray-700">Type</label>
-                <select wire:model="dashboardType" id="dashboardType" 
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <label for="dashboardType" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
+                <select wire:model="dashboardType" id="dashboardType"
+                        class="mt-1 block w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     <option value="personal">Personal</option>
                     <option value="team">Team</option>
                     <option value="company">Company</option>
                 </select>
             </div>
             <div class="md:col-span-2">
-                <label for="dashboardDescription" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea wire:model="dashboardDescription" id="dashboardDescription" rows="3" 
-                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                <label for="dashboardDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                <textarea wire:model="dashboardDescription" id="dashboardDescription" rows="3"
+                          class="mt-1 block w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
             </div>
             <div class="md:col-span-2">
                 <div class="flex items-center">
-                    <input wire:model="isPublic" id="isPublic" type="checkbox" 
-                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <label for="isPublic" class="ml-2 block text-sm text-gray-900">Make this dashboard public</label>
+                    <input wire:model="isPublic" id="isPublic" type="checkbox"
+                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded">
+                    <label for="isPublic" class="ml-2 block text-sm text-gray-900 dark:text-white">Make this dashboard public</label>
                 </div>
             </div>
         </div>
@@ -64,34 +64,34 @@
 
     <!-- Dashboard Grid -->
     @if($isEditing && $dashboard)
-    <div class="bg-white shadow-sm rounded-lg p-6">
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-medium text-gray-900">{{ $dashboard->name }}</h3>
-            <button wire:click="updateDashboard" 
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $dashboard->name }}</h3>
+            <button wire:click="updateDashboard"
                     class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                 Save Changes
             </button>
         </div>
-        
+
         <div class="grid grid-cols-12 gap-4 min-h-96" id="dashboard-grid">
             @foreach($widgets as $widget)
-            <div class="dashboard-widget col-span-{{ $widget->position['w'] ?? 4 }} row-span-{{ $widget->position['h'] ?? 3 }} bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-200"
+            <div class="dashboard-widget col-span-{{ $widget->position['w'] ?? 4 }} row-span-{{ $widget->position['h'] ?? 3 }} bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-200 dark:border-gray-600"
                  data-widget-id="{{ $widget->id }}">
                 <div class="flex items-center justify-between mb-2">
-                    <h4 class="font-medium text-gray-900">{{ $widget->title }}</h4>
+                    <h4 class="font-medium text-gray-900 dark:text-white">{{ $widget->title }}</h4>
                     <div class="flex space-x-1">
-                        <button wire:click="deleteWidget({{ $widget->id }})" 
-                                class="text-red-600 hover:text-red-800">
+                        <button wire:click="deleteWidget({{ $widget->id }})"
+                                class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                             </svg>
                         </button>
                     </div>
                 </div>
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
                     {{ $widget->description }}
                 </div>
-                <div class="mt-2 text-xs text-gray-400">
+                <div class="mt-2 text-xs text-gray-400 dark:text-gray-500">
                     Type: {{ ucfirst($widget->widget_type) }}
                 </div>
             </div>
@@ -101,20 +101,20 @@
     @endif
 
     <!-- Available Dashboards -->
-    <div class="bg-white shadow-sm rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Available Dashboards</h3>
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Available Dashboards</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($userDashboards as $userDashboard)
-            <div class="border rounded-lg p-4 hover:border-blue-500 cursor-pointer transition-colors"
+            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer transition-colors"
                  wire:click="mount({{ $userDashboard->id }})">
                 <div class="flex items-center justify-between mb-2">
-                    <h4 class="font-medium text-gray-900">{{ $userDashboard->name }}</h4>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $userDashboard->type === 'personal' ? 'bg-blue-100 text-blue-800' : ($userDashboard->type === 'team' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800') }}">
+                    <h4 class="font-medium text-gray-900 dark:text-white">{{ $userDashboard->name }}</h4>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $userDashboard->type === 'personal' ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' : ($userDashboard->type === 'team' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200') }}">
                         {{ ucfirst($userDashboard->type) }}
                     </span>
                 </div>
-                <p class="text-sm text-gray-500">{{ $userDashboard->description }}</p>
-                <div class="mt-2 text-xs text-gray-400">
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $userDashboard->description }}</p>
+                <div class="mt-2 text-xs text-gray-400 dark:text-gray-500">
                     {{ $userDashboard->dashboardWidgets()->count() }} widgets
                 </div>
             </div>
@@ -123,15 +123,15 @@
     </div>
 
     <!-- Available Widget Types -->
-    <div class="bg-white shadow-sm rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Available Widget Types</h3>
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Available Widget Types</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($availableWidgets as $type => $widget)
-            <div class="border rounded-lg p-4 hover:border-blue-500 cursor-pointer transition-colors"
+            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer transition-colors"
                  wire:click="addWidget('{{ $type }}')">
                 <div class="flex items-center mb-2">
-                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <!-- Dynamic icon based on widget type -->
                             @if($widget['icon'] === 'chart-bar')
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
@@ -146,12 +146,12 @@
                             @endif
                         </svg>
                     </div>
-                    <h4 class="font-medium text-gray-900">{{ $widget['name'] }}</h4>
+                    <h4 class="font-medium text-gray-900 dark:text-white">{{ $widget['name'] }}</h4>
                 </div>
-                <p class="text-sm text-gray-500">{{ $widget['description'] }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $widget['description'] }}</p>
                 <div class="mt-2 flex flex-wrap gap-1">
                     @foreach($widget['types'] as $subType)
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
                         {{ ucfirst($subType) }}
                     </span>
                     @endforeach
@@ -163,14 +163,14 @@
 
     <!-- Widget Creation Modal -->
     @if($showWidgetModal)
-    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border border-gray-200 dark:border-gray-700 w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
             <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Widget</h3>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Add New Widget</h3>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Widget Type</label>
-                        <select class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Widget Type</label>
+                        <select class="mt-1 block w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option>Chart</option>
                             <option>Metric</option>
                             <option>Table</option>
@@ -179,17 +179,17 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Title</label>
-                        <input type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                        <input type="text" class="mt-1 block w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                        <textarea rows="3" class="mt-1 block w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
-                    <button wire:click="$set('showWidgetModal', false)" 
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                    <button wire:click="$set('showWidgetModal', false)"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">
                         Cancel
                     </button>
                     <button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700">

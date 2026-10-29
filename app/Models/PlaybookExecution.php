@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PlaybookExecution extends Model
 {
@@ -54,6 +55,23 @@ class PlaybookExecution extends Model
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    public function stepExecutions(): HasMany
+    {
+        return $this->hasMany(PlaybookStepExecution::class, 'execution_id');
+    }
+
+    public function completedStepExecutions(): HasMany
+    {
+        return $this->hasMany(PlaybookStepExecution::class, 'execution_id')
+            ->where('status', 'completed');
+    }
+
+    public function skippedStepExecutions(): HasMany
+    {
+        return $this->hasMany(PlaybookStepExecution::class, 'execution_id')
+            ->where('status', 'skipped');
     }
 
     // Status helpers
@@ -117,8 +135,19 @@ class PlaybookExecution extends Model
 
     public function getCompletedSteps(): int
     {
-        $stepResults = $this->step_results ?: [];
-        return count(array_filter($stepResults, fn($result) => $result['completed'] ?? false));
+        return $this->stepExecutions()
+            ->whereIn('status', ['completed', 'skipped'])
+            ->count();
+    }
+
+    public function getCompletedOnlySteps(): int
+    {
+        return $this->completedStepExecutions()->count();
+    }
+
+    public function getSkippedSteps(): int
+    {
+        return $this->skippedStepExecutions()->count();
     }
 
     public function getTotalSteps(): int
@@ -129,20 +158,104 @@ class PlaybookExecution extends Model
     public function getProgressPercentage(): int
     {
         $totalSteps = $this->getTotalSteps();
-        if ($totalSteps === 0) return 0;
-        
+
+        if ($totalSteps === 0) {
+            return 0;
+        }
+
         return round(($this->getCompletedSteps() / $totalSteps) * 100);
     }
 
-    // Step result management
-    public function completeStep(PlaybookStep $step, array $result = []): void
+    public function getTotalDurationSeconds(): int
     {
+        return $this->stepExecutions()
+            ->whereNotNull('duration_seconds')
+            ->sum('duration_seconds');
+    }
+
+    public function getFormattedTotalDuration(): string
+    {
+        $totalSeconds = $this->getTotalDurationSeconds();
+
+        if ($totalSeconds === 0) {
+            return '-';
+        }
+
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        if ($hours > 0) {
+            return "{$hours}h {$minutes}m {$seconds}s";
+        }
+
+        if ($minutes > 0) {
+            return "{$minutes}m {$seconds}s";
+        }
+
+        return "{$seconds}s";
+    }
+
+    public function initializeStepExecutions(): void
+    {
+        $steps = $this->playbook->steps()->where('is_active', true)->get();
+
+        foreach ($steps as $step) {
+            $this->stepExecutions()->firstOrCreate(
+                ['step_id' => $step->id],
+                [
+                    'user_id' => $this->user_id,
+                    'status' => 'pending',
+                ]
+            );
+        }
+    }
+
+    public function getStepExecution(PlaybookStep $step): ?PlaybookStepExecution
+    {
+        return $this->stepExecutions()->where('step_id', $step->id)->first();
+    }
+
+    public function startStep(PlaybookStep $step): PlaybookStepExecution
+    {
+        $stepExecution = $this->getStepExecution($step);
+
+        if (! $stepExecution) {
+            $stepExecution = $this->stepExecutions()->create([
+                'step_id' => $step->id,
+                'user_id' => $this->user_id,
+                'status' => 'pending',
+            ]);
+        }
+
+        $stepExecution->start();
+
+        return $stepExecution;
+    }
+
+    public function completeStep(PlaybookStep $step, array $result = [], ?string $notes = null): void
+    {
+        $stepExecution = $this->getStepExecution($step);
+
+        if (! $stepExecution) {
+            $stepExecution = $this->stepExecutions()->create([
+                'step_id' => $step->id,
+                'user_id' => $this->user_id,
+                'status' => 'in_progress',
+                'started_at' => now(),
+            ]);
+        }
+
+        $stepExecution->complete($result, $notes);
+
+        // Update step_results for backward compatibility
         $stepResults = $this->step_results ?: [];
         $stepResults[$step->id] = [
             'step_id' => $step->id,
             'completed' => true,
             'completed_at' => now()->toISOString(),
             'result' => $result,
+            'notes' => $notes,
         ];
 
         $this->update([
@@ -151,12 +264,48 @@ class PlaybookExecution extends Model
         ]);
 
         // Check if all steps are completed
-        if (!$this->getNextStep() && $this->isInProgress()) {
+        if (! $this->getNextStep() && $this->isInProgress()) {
             $this->complete();
         }
     }
 
-    public function complete(string $outcome = 'successful', string $notes = null): void
+    public function skipStep(PlaybookStep $step, string $reason, ?string $notes = null): void
+    {
+        $stepExecution = $this->getStepExecution($step);
+
+        if (! $stepExecution) {
+            $stepExecution = $this->stepExecutions()->create([
+                'step_id' => $step->id,
+                'user_id' => $this->user_id,
+                'status' => 'pending',
+            ]);
+        }
+
+        $stepExecution->skip($reason, $notes);
+
+        // Update step_results for backward compatibility
+        $stepResults = $this->step_results ?: [];
+        $stepResults[$step->id] = [
+            'step_id' => $step->id,
+            'completed' => false,
+            'skipped' => true,
+            'skipped_at' => now()->toISOString(),
+            'skipped_reason' => $reason,
+            'notes' => $notes,
+        ];
+
+        $this->update([
+            'step_results' => $stepResults,
+            'current_step_order' => $this->getNextStep()?->sort_order ?? $this->current_step_order,
+        ]);
+
+        // Check if all steps are completed or skipped
+        if (! $this->getNextStep() && $this->isInProgress()) {
+            $this->complete('partial');
+        }
+    }
+
+    public function complete(string $outcome = 'successful', ?string $notes = null): void
     {
         $this->update([
             'status' => 'completed',
@@ -170,11 +319,30 @@ class PlaybookExecution extends Model
         $this->playbook->updateSuccessRate();
     }
 
-    public function abandon(string $notes = null): void
+    public function abandon(?string $notes = null): void
     {
         $this->update([
             'status' => 'abandoned',
             'notes' => $notes,
         ]);
+    }
+
+    public function getStepsWithExecutions(): array
+    {
+        $steps = $this->playbook->steps()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        $stepExecutionsMap = $this->stepExecutions()
+            ->get()
+            ->keyBy('step_id');
+
+        return $steps->map(function ($step) use ($stepExecutionsMap) {
+            return [
+                'step' => $step,
+                'execution' => $stepExecutionsMap->get($step->id),
+            ];
+        })->toArray();
     }
 }

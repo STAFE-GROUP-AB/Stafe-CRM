@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3847de8794716cdd6d8e764cc027ad5d",
+    "content-hash": "961a53feda5d35c54e89ba943dbccee1",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -60,6 +60,83 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.3"
             },
             "time": "2025-11-19T17:15:36+00:00"
+        },
+        {
+            "name": "barryvdh/laravel-dompdf",
+            "version": "v3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/barryvdh/laravel-dompdf.git",
+                "reference": "8e71b99fc53bb8eb77f316c3c452dd74ab7cb25d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/8e71b99fc53bb8eb77f316c3c452dd74ab7cb25d",
+                "reference": "8e71b99fc53bb8eb77f316c3c452dd74ab7cb25d",
+                "shasum": ""
+            },
+            "require": {
+                "dompdf/dompdf": "^3.0",
+                "illuminate/support": "^9|^10|^11|^12",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "larastan/larastan": "^2.7|^3.0",
+                "orchestra/testbench": "^7|^8|^9|^10",
+                "phpro/grumphp": "^2.5",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "PDF": "Barryvdh\\DomPDF\\Facade\\Pdf",
+                        "Pdf": "Barryvdh\\DomPDF\\Facade\\Pdf"
+                    },
+                    "providers": [
+                        "Barryvdh\\DomPDF\\ServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Barryvdh\\DomPDF\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Barry vd. Heuvel",
+                    "email": "barryvdh@gmail.com"
+                }
+            ],
+            "description": "A DOMPDF Wrapper for Laravel",
+            "keywords": [
+                "dompdf",
+                "laravel",
+                "pdf"
+            ],
+            "support": {
+                "issues": "https://github.com/barryvdh/laravel-dompdf/issues",
+                "source": "https://github.com/barryvdh/laravel-dompdf/tree/v3.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://fruitcake.nl",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/barryvdh",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-13T15:07:54+00:00"
         },
         {
             "name": "brick/math",
@@ -484,6 +561,161 @@
             "time": "2024-02-05T11:56:58+00:00"
         },
         {
+            "name": "dompdf/dompdf",
+            "version": "v3.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/dompdf.git",
+                "reference": "db712c90c5b9868df3600e64e68da62e78a34623"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/db712c90c5b9868df3600e64e68da62e78a34623",
+                "reference": "db712c90c5b9868df3600e64e68da62e78a34623",
+                "shasum": ""
+            },
+            "require": {
+                "dompdf/php-font-lib": "^1.0.0",
+                "dompdf/php-svg-lib": "^1.0.0",
+                "ext-dom": "*",
+                "ext-mbstring": "*",
+                "masterminds/html5": "^2.0",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "ext-gd": "*",
+                "ext-json": "*",
+                "ext-zip": "*",
+                "mockery/mockery": "^1.3",
+                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10 || ^11",
+                "squizlabs/php_codesniffer": "^3.5",
+                "symfony/process": "^4.4 || ^5.4 || ^6.2 || ^7.0"
+            },
+            "suggest": {
+                "ext-gd": "Needed to process images",
+                "ext-gmagick": "Improves image processing performance",
+                "ext-imagick": "Improves image processing performance",
+                "ext-zlib": "Needed for pdf stream compression"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dompdf\\": "src/"
+                },
+                "classmap": [
+                    "lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "The Dompdf Community",
+                    "homepage": "https://github.com/dompdf/dompdf/blob/master/AUTHORS.md"
+                }
+            ],
+            "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
+            "homepage": "https://github.com/dompdf/dompdf",
+            "support": {
+                "issues": "https://github.com/dompdf/dompdf/issues",
+                "source": "https://github.com/dompdf/dompdf/tree/v3.1.4"
+            },
+            "time": "2025-10-29T12:43:30+00:00"
+        },
+        {
+            "name": "dompdf/php-font-lib",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/php-font-lib.git",
+                "reference": "6137b7d4232b7f16c882c75e4ca3991dbcf6fe2d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/php-font-lib/zipball/6137b7d4232b7f16c882c75e4ca3991dbcf6fe2d",
+                "reference": "6137b7d4232b7f16c882c75e4ca3991dbcf6fe2d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^3 || ^4 || ^5 || ^6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FontLib\\": "src/FontLib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "The FontLib Community",
+                    "homepage": "https://github.com/dompdf/php-font-lib/blob/master/AUTHORS.md"
+                }
+            ],
+            "description": "A library to read, parse, export and make subsets of different types of font files.",
+            "homepage": "https://github.com/dompdf/php-font-lib",
+            "support": {
+                "issues": "https://github.com/dompdf/php-font-lib/issues",
+                "source": "https://github.com/dompdf/php-font-lib/tree/1.0.1"
+            },
+            "time": "2024-12-02T14:37:59+00:00"
+        },
+        {
+            "name": "dompdf/php-svg-lib",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/php-svg-lib.git",
+                "reference": "eb045e518185298eb6ff8d80d0d0c6b17aecd9af"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/php-svg-lib/zipball/eb045e518185298eb6ff8d80d0d0c6b17aecd9af",
+                "reference": "eb045e518185298eb6ff8d80d0d0c6b17aecd9af",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.1 || ^8.0",
+                "sabberworm/php-css-parser": "^8.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Svg\\": "src/Svg"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "The SvgLib Community",
+                    "homepage": "https://github.com/dompdf/php-svg-lib/blob/master/AUTHORS.md"
+                }
+            ],
+            "description": "A library to read, parse and export to PDF SVG files.",
+            "homepage": "https://github.com/dompdf/php-svg-lib",
+            "support": {
+                "issues": "https://github.com/dompdf/php-svg-lib/issues",
+                "source": "https://github.com/dompdf/php-svg-lib/tree/1.0.0"
+            },
+            "time": "2024-04-29T13:26:35+00:00"
+        },
+        {
             "name": "dragonmantank/cron-expression",
             "version": "v3.4.0",
             "source": {
@@ -825,6 +1057,181 @@
                 }
             ],
             "time": "2023-10-12T05:21:21+00:00"
+        },
+        {
+            "name": "google/apiclient",
+            "version": "v2.18.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/google-api-php-client.git",
+                "reference": "5b51fdb2cbd2a96088e3dfc6f565bdf6fb0af94b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/5b51fdb2cbd2a96088e3dfc6f565bdf6fb0af94b",
+                "reference": "5b51fdb2cbd2a96088e3dfc6f565bdf6fb0af94b",
+                "shasum": ""
+            },
+            "require": {
+                "firebase/php-jwt": "^6.0",
+                "google/apiclient-services": "~0.350",
+                "google/auth": "^1.37",
+                "guzzlehttp/guzzle": "^7.4.5",
+                "guzzlehttp/psr7": "^2.6",
+                "monolog/monolog": "^2.9||^3.0",
+                "php": "^8.1",
+                "phpseclib/phpseclib": "^3.0.36"
+            },
+            "require-dev": {
+                "cache/filesystem-adapter": "^1.1",
+                "composer/composer": "^1.10.23",
+                "phpcompatibility/php-compatibility": "^9.2",
+                "phpspec/prophecy-phpunit": "^2.1",
+                "phpunit/phpunit": "^9.6",
+                "squizlabs/php_codesniffer": "^3.8",
+                "symfony/css-selector": "~2.1",
+                "symfony/dom-crawler": "~2.1"
+            },
+            "suggest": {
+                "cache/filesystem-adapter": "For caching certs and tokens (using Google\\Client::setCache)"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/aliases.php"
+                ],
+                "psr-4": {
+                    "Google\\": "src/"
+                },
+                "classmap": [
+                    "src/aliases.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Client library for Google APIs",
+            "homepage": "http://developers.google.com/api-client-library/php",
+            "keywords": [
+                "google"
+            ],
+            "support": {
+                "issues": "https://github.com/googleapis/google-api-php-client/issues",
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.18.4"
+            },
+            "time": "2025-09-30T04:23:07+00:00"
+        },
+        {
+            "name": "google/apiclient-services",
+            "version": "v0.426.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/google-api-php-client-services.git",
+                "reference": "cc74cd104a1ed1cf545480c52f13831e6eb0efe2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/cc74cd104a1ed1cf545480c52f13831e6eb0efe2",
+                "reference": "cc74cd104a1ed1cf545480c52f13831e6eb0efe2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "autoload.php"
+                ],
+                "psr-4": {
+                    "Google\\Service\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Client library for Google APIs",
+            "homepage": "http://developers.google.com/api-client-library/php",
+            "keywords": [
+                "google"
+            ],
+            "support": {
+                "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.426.0"
+            },
+            "time": "2025-12-24T01:04:22+00:00"
+        },
+        {
+            "name": "google/auth",
+            "version": "v1.49.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/googleapis/google-auth-library-php.git",
+                "reference": "68e3d88cb59a49f713e3db25d4f6bb3cc0b70764"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/68e3d88cb59a49f713e3db25d4f6bb3cc0b70764",
+                "reference": "68e3d88cb59a49f713e3db25d4f6bb3cc0b70764",
+                "shasum": ""
+            },
+            "require": {
+                "firebase/php-jwt": "^6.0",
+                "guzzlehttp/guzzle": "^7.4.5",
+                "guzzlehttp/psr7": "^2.4.5",
+                "php": "^8.1",
+                "psr/cache": "^2.0||^3.0",
+                "psr/http-message": "^1.1||^2.0",
+                "psr/log": "^3.0"
+            },
+            "require-dev": {
+                "guzzlehttp/promises": "^2.0",
+                "kelvinmo/simplejwt": "0.7.1",
+                "phpseclib/phpseclib": "^3.0.35",
+                "phpspec/prophecy-phpunit": "^2.1",
+                "phpunit/phpunit": "^9.6",
+                "sebastian/comparator": ">=1.2.3",
+                "squizlabs/php_codesniffer": "^4.0",
+                "symfony/filesystem": "^6.3||^7.3",
+                "symfony/process": "^6.0||^7.0",
+                "webmozart/assert": "^1.11"
+            },
+            "suggest": {
+                "phpseclib/phpseclib": "May be used in place of OpenSSL for signing strings or for token management. Please require version ^2."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Google\\Auth\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Google Auth Library for PHP",
+            "homepage": "https://github.com/google/google-auth-library-php",
+            "keywords": [
+                "Authentication",
+                "google",
+                "oauth2"
+            ],
+            "support": {
+                "docs": "https://cloud.google.com/php/docs/reference/auth/latest",
+                "issues": "https://github.com/googleapis/google-auth-library-php/issues",
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.49.0"
+            },
+            "time": "2025-11-06T21:27:55+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -2812,6 +3219,139 @@
             "time": "2025-12-19T02:00:29+00:00"
         },
         {
+            "name": "masbug/flysystem-google-drive-ext",
+            "version": "v2.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/masbug/flysystem-google-drive-ext.git",
+                "reference": "99082781f977786fdef3027470ed9f9b59b84c5a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/masbug/flysystem-google-drive-ext/zipball/99082781f977786fdef3027470ed9f9b59b84c5a",
+                "reference": "99082781f977786fdef3027470ed9f9b59b84c5a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "google/apiclient": "^2.2",
+                "guzzlehttp/guzzle": "^6.3 | ^7.0",
+                "guzzlehttp/psr7": "^1.7|^2.0",
+                "league/flysystem": "^2.1.1|^3.0",
+                "php": "^7.2 | ^8.0"
+            },
+            "require-dev": {
+                "league/flysystem-adapter-test-utilities": "^2.0|^3.0",
+                "phpunit/phpunit": "^8.0 | ^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Masbug\\Flysystem\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Naoki Sawada",
+                    "email": "hypweb@gmail.com"
+                },
+                {
+                    "name": "Mitja Spes",
+                    "email": "mitja@lxnav.com"
+                }
+            ],
+            "description": "Flysystem adapter for Google Drive with seamless virtual<=>display path translation",
+            "keywords": [
+                "Flysystem",
+                "extended",
+                "google-drive",
+                "laravel",
+                "translated"
+            ],
+            "support": {
+                "issues": "https://github.com/masbug/flysystem-google-drive-ext/issues",
+                "source": "https://github.com/masbug/flysystem-google-drive-ext/tree/v2.4.1"
+            },
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/masbug",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2024-10-22T12:58:57+00:00"
+        },
+        {
+            "name": "masterminds/html5",
+            "version": "2.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Masterminds/html5-php.git",
+                "reference": "fcf91eb64359852f00d921887b219479b4f21251"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/fcf91eb64359852f00d921887b219479b4f21251",
+                "reference": "fcf91eb64359852f00d921887b219479b4f21251",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8 || ^9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Masterminds\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Butcher",
+                    "email": "technosophos@gmail.com"
+                },
+                {
+                    "name": "Matt Farina",
+                    "email": "matt@mattfarina.com"
+                },
+                {
+                    "name": "Asmir Mustafic",
+                    "email": "goetas@gmail.com"
+                }
+            ],
+            "description": "An HTML5 parser and serializer.",
+            "homepage": "http://masterminds.github.io/html5-php",
+            "keywords": [
+                "HTML5",
+                "dom",
+                "html",
+                "parser",
+                "querypath",
+                "serializer",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/Masterminds/html5-php/issues",
+                "source": "https://github.com/Masterminds/html5-php/tree/2.10.0"
+            },
+            "time": "2025-07-25T09:04:22+00:00"
+        },
+        {
             "name": "mobiledetect/mobiledetectlib",
             "version": "4.8.09",
             "source": {
@@ -4696,6 +5236,72 @@
             "time": "2025-06-25T14:20:11+00:00"
         },
         {
+            "name": "sabberworm/php-css-parser",
+            "version": "v8.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MyIntervals/PHP-CSS-Parser.git",
+                "reference": "d8e916507b88e389e26d4ab03c904a082aa66bb9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/d8e916507b88e389e26d4ab03c904a082aa66bb9",
+                "reference": "d8e916507b88e389e26d4ab03c904a082aa66bb9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "php": "^5.6.20 || ^7.0.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "5.7.27 || 6.5.14 || 7.5.20 || 8.5.41",
+                "rawr/cross-data-providers": "^2.0.0"
+            },
+            "suggest": {
+                "ext-mbstring": "for parsing UTF-8 CSS"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "9.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sabberworm\\CSS\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raphael Schweikert"
+                },
+                {
+                    "name": "Oliver Klee",
+                    "email": "github@oliverklee.de"
+                },
+                {
+                    "name": "Jake Hotson",
+                    "email": "jake.github@qzdesign.co.uk"
+                }
+            ],
+            "description": "Parser for CSS Files written in PHP",
+            "homepage": "https://www.sabberworm.com/blog/2010/6/10/php-css-parser",
+            "keywords": [
+                "css",
+                "parser",
+                "stylesheet"
+            ],
+            "support": {
+                "issues": "https://github.com/MyIntervals/PHP-CSS-Parser/issues",
+                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.9.0"
+            },
+            "time": "2025-07-11T13:20:48+00:00"
+        },
+        {
             "name": "socialiteproviders/manager",
             "version": "v4.8.1",
             "source": {
@@ -4871,6 +5477,169 @@
             "time": "2024-11-07T21:57:40+00:00"
         },
         {
+            "name": "spatie/db-dumper",
+            "version": "3.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/db-dumper.git",
+                "reference": "9519c64e4938f0b9e4498b8a8e572061bc6b7cfb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/9519c64e4938f0b9e4498b8a8e572061bc6b7cfb",
+                "reference": "9519c64e4938f0b9e4498b8a8e572061bc6b7cfb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0",
+                "symfony/process": "^5.0|^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.22"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\DbDumper\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Dump databases",
+            "homepage": "https://github.com/spatie/db-dumper",
+            "keywords": [
+                "database",
+                "db-dumper",
+                "dump",
+                "mysqldump",
+                "spatie"
+            ],
+            "support": {
+                "source": "https://github.com/spatie/db-dumper/tree/3.8.2"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-12-10T09:29:52+00:00"
+        },
+        {
+            "name": "spatie/laravel-backup",
+            "version": "9.3.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-backup.git",
+                "reference": "d378a07b580aa8bf440b50decdbab7b5d6f63c46"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-backup/zipball/d378a07b580aa8bf440b50decdbab7b5d6f63c46",
+                "reference": "d378a07b580aa8bf440b50decdbab7b5d6f63c46",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zip": "^1.14.0",
+                "illuminate/console": "^10.10.0|^11.0|^12.0",
+                "illuminate/contracts": "^10.10.0|^11.0|^12.0",
+                "illuminate/events": "^10.10.0|^11.0|^12.0",
+                "illuminate/filesystem": "^10.10.0|^11.0|^12.0",
+                "illuminate/notifications": "^10.10.0|^11.0|^12.0",
+                "illuminate/support": "^10.10.0|^11.0|^12.0",
+                "league/flysystem": "^3.0",
+                "php": "^8.2",
+                "spatie/db-dumper": "^3.8",
+                "spatie/laravel-package-tools": "^1.6.2",
+                "spatie/laravel-signal-aware-command": "^1.2|^2.0",
+                "spatie/temporary-directory": "^2.0",
+                "symfony/console": "^6.0|^7.0",
+                "symfony/finder": "^6.0|^7.0"
+            },
+            "require-dev": {
+                "composer-runtime-api": "^2.0",
+                "ext-pcntl": "*",
+                "larastan/larastan": "^2.7.0|^3.0",
+                "laravel/slack-notification-channel": "^2.5|^3.0",
+                "league/flysystem-aws-s3-v3": "^2.0|^3.0",
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^8.0|^9.0|^10.0",
+                "pestphp/pest": "^1.20|^2.0|^3.0|^4.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.1",
+                "rector/rector": "^1.1"
+            },
+            "suggest": {
+                "laravel/slack-notification-channel": "Required for sending notifications via Slack"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\Backup\\BackupServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/functions.php"
+                ],
+                "psr-4": {
+                    "Spatie\\Backup\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel package to backup your application",
+            "homepage": "https://github.com/spatie/laravel-backup",
+            "keywords": [
+                "backup",
+                "database",
+                "laravel-backup",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-backup/issues",
+                "source": "https://github.com/spatie/laravel-backup/tree/9.3.6"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/spatie",
+                    "type": "github"
+                },
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "other"
+                }
+            ],
+            "time": "2025-11-05T11:25:01+00:00"
+        },
+        {
             "name": "spatie/laravel-package-tools",
             "version": "1.92.4",
             "source": {
@@ -5015,6 +5784,81 @@
             "time": "2025-06-05T07:33:07+00:00"
         },
         {
+            "name": "spatie/laravel-signal-aware-command",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-signal-aware-command.git",
+                "reference": "70207ba2702a9ee8f523af0cd4711d1104c5ca53"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-signal-aware-command/zipball/70207ba2702a9ee8f523af0cd4711d1104c5ca53",
+                "reference": "70207ba2702a9ee8f523af0cd4711d1104c5ca53",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^11.0|^12.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.4.3",
+                "symfony/console": "^7.0|^8.0"
+            },
+            "require-dev": {
+                "brianium/paratest": "^6.2|^7.0",
+                "ext-pcntl": "*",
+                "nunomaduro/collision": "^5.3|^6.0|^7.0|^8.0",
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest-plugin-laravel": "^1.3|^2.0|^3.0",
+                "phpunit/phpunit": "^9.5|^10|^11",
+                "spatie/laravel-ray": "^1.17"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Signal": "Spatie\\SignalAwareCommand\\Facades\\Signal"
+                    },
+                    "providers": [
+                        "Spatie\\SignalAwareCommand\\SignalAwareCommandServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\SignalAwareCommand\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Handle signals in artisan commands",
+            "homepage": "https://github.com/spatie/laravel-signal-aware-command",
+            "keywords": [
+                "laravel",
+                "laravel-signal-aware-command",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-signal-aware-command/issues",
+                "source": "https://github.com/spatie/laravel-signal-aware-command/tree/2.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-27T09:17:52+00:00"
+        },
+        {
             "name": "spatie/laravel-webhook-client",
             "version": "3.4.4",
             "source": {
@@ -5089,6 +5933,67 @@
                 }
             ],
             "time": "2025-06-27T16:01:51+00:00"
+        },
+        {
+            "name": "spatie/temporary-directory",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/temporary-directory.git",
+                "reference": "580eddfe9a0a41a902cac6eeb8f066b42e65a32b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/temporary-directory/zipball/580eddfe9a0a41a902cac6eeb8f066b42e65a32b",
+                "reference": "580eddfe9a0a41a902cac6eeb8f066b42e65a32b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\TemporaryDirectory\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Vanderbist",
+                    "email": "alex@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Easily create, use and destroy temporary directories",
+            "homepage": "https://github.com/spatie/temporary-directory",
+            "keywords": [
+                "php",
+                "spatie",
+                "temporary-directory"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/temporary-directory/issues",
+                "source": "https://github.com/spatie/temporary-directory/tree/2.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-01-13T13:04:43+00:00"
         },
         {
             "name": "symfony/clock",

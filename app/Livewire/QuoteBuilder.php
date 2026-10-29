@@ -2,21 +2,30 @@
 
 namespace App\Livewire;
 
-use App\Models\Quote;
-use App\Models\Deal;
+use App\Mail\QuoteMail;
 use App\Models\Company;
 use App\Models\Contact;
+use App\Models\Deal;
+use App\Models\Quote;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class QuoteBuilder extends Component
 {
     use WithPagination;
 
     public $showCreateModal = false;
+    public $showLineItemsModal = false;
+    public $showEmailModal = false;
+    public $showPreviewModal = false;
     public $editingQuote = null;
     public $selectedQuote = null;
-    
+    public $quoteForLineItems = null;
+    public $quoteForEmail = null;
+    public $quoteForPreview = null;
+
     // Form fields
     public $title = '';
     public $description = '';
@@ -25,7 +34,11 @@ class QuoteBuilder extends Component
     public $contact_id = '';
     public $valid_until = '';
     public $terms_and_conditions = [];
-    
+
+    // Email form fields
+    public $emailRecipient = '';
+    public $emailMessage = '';
+
     // Search and filters
     public $search = '';
     public $statusFilter = '';
@@ -108,14 +121,35 @@ class QuoteBuilder extends Component
 
         if ($this->editingQuote) {
             $this->editingQuote->update($data);
+            $quote = $this->editingQuote;
             session()->flash('message', 'Quote updated successfully.');
         } else {
-            Quote::create($data);
+            $quote = Quote::create($data);
             session()->flash('message', 'Quote created successfully.');
         }
 
         $this->resetForm();
         $this->showCreateModal = false;
+
+        $this->manageLineItems($quote);
+    }
+
+    public function manageLineItems(Quote $quote)
+    {
+        $this->quoteForLineItems = $quote->load('items');
+        $this->showLineItemsModal = true;
+    }
+
+    public function closeLineItemsModal()
+    {
+        $this->showLineItemsModal = false;
+        $this->quoteForLineItems = null;
+    }
+
+    public function closeModal()
+    {
+        $this->showCreateModal = false;
+        $this->resetForm();
     }
 
     public function deleteQuote(Quote $quote)
@@ -145,14 +179,103 @@ class QuoteBuilder extends Component
         $newQuote->rejected_at = null;
         $newQuote->save();
 
-        // Duplicate quote items
         foreach ($quote->items as $item) {
             $newItem = $item->replicate();
             $newItem->quote_id = $newQuote->id;
             $newItem->save();
         }
 
-        session()->flash('message', 'Quote duplicated successfully.');
+        session()->flash('message', 'Offert duplicerad.');
+    }
+
+    public function openEmailModal(Quote $quote)
+    {
+        $this->quoteForEmail = $quote->load(['contact', 'company']);
+        $this->emailRecipient = $quote->contact?->email ?? '';
+        $this->emailMessage = '';
+        $this->showEmailModal = true;
+    }
+
+    public function closeEmailModal()
+    {
+        $this->showEmailModal = false;
+        $this->quoteForEmail = null;
+        $this->emailRecipient = '';
+        $this->emailMessage = '';
+    }
+
+    public function sendEmailQuote()
+    {
+        $this->validate([
+            'emailRecipient' => ['required', 'email'],
+            'emailMessage' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        if (!$this->quoteForEmail) {
+            session()->flash('error', 'Ingen offert vald.');
+            return;
+        }
+
+        $quote = $this->quoteForEmail->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
+
+        Mail::to($this->emailRecipient)
+            ->send(new QuoteMail($quote, $this->emailMessage ?? ''));
+
+        $quote->update([
+            'status' => 'sent',
+            'sent_at' => now(),
+        ]);
+
+        $this->closeEmailModal();
+        session()->flash('message', "Offert har skickats till {$this->emailRecipient}.");
+    }
+
+    public function openPreviewModal(Quote $quote)
+    {
+        $this->quoteForPreview = $quote->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
+        $this->showPreviewModal = true;
+    }
+
+    public function closePreviewModal()
+    {
+        $this->showPreviewModal = false;
+        $this->quoteForPreview = null;
+    }
+
+    /**
+     * Generate and download PDF for a quote
+     */
+    public function downloadPdf(Quote $quote)
+    {
+        $quote->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
+        
+        $pdf = Pdf::loadView('sales-enablement.quote-pdf', ['quote' => $quote])
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true);
+        
+        $filename = 'quote-' . $quote->quote_number . '-' . now()->format('Y-m-d') . '.pdf';
+        
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    /**
+     * Generate PDF preview (base64 encoded for iframe)
+     */
+    public function generatePdfPreview(Quote $quote)
+    {
+        $quote->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
+        
+        $pdf = Pdf::loadView('sales-enablement.quote-pdf', ['quote' => $quote])
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true);
+        
+        return base64_encode($pdf->output());
     }
 
     public function updatedDealId()

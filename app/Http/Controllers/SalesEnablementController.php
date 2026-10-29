@@ -2,31 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\QuoteMail;
 use App\Models\Quote;
 use App\Models\SalesContent;
 use App\Models\PlaybookExecution;
 use App\Models\PlaybookStep;
 use App\Models\QuoteSignature;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class SalesEnablementController extends Controller
 {
     public function previewQuote(Quote $quote)
     {
         $quote->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
-        
+
         return view('sales-enablement.quote-preview', compact('quote'));
     }
 
     public function downloadQuotePdf(Quote $quote)
     {
-        $quote->load(['items', 'company', 'contact', 'createdBy']);
-        
+        $quote->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
+
         $pdf = Pdf::loadView('sales-enablement.quote-pdf', compact('quote'));
-        
-        return $pdf->download("quote-{$quote->quote_number}.pdf");
+
+        return $pdf->download("offert-{$quote->quote_number}.pdf");
+    }
+
+    public function streamQuotePdf(Quote $quote)
+    {
+        $quote->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
+
+        $pdf = Pdf::loadView('sales-enablement.quote-pdf', compact('quote'));
+
+        return $pdf->stream("offert-{$quote->quote_number}.pdf");
+    }
+
+    public function emailQuote(Request $request, Quote $quote)
+    {
+        $request->validate([
+            'recipient_email' => ['required', 'email'],
+            'personal_message' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $quote->load(['items', 'company', 'contact', 'createdBy', 'signatures']);
+
+        Mail::to($request->recipient_email)
+            ->send(new QuoteMail($quote, $request->personal_message ?? ''));
+
+        $quote->update([
+            'status' => 'sent',
+            'sent_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Offert har skickats till ' . $request->recipient_email,
+        ]);
     }
 
     public function signQuote(Quote $quote)

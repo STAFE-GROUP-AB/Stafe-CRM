@@ -33,6 +33,10 @@ class Email extends Model
         'emailable_id',
         'user_id',
         'email_template_id',
+        'tracking_token',
+        'open_count',
+        'click_count',
+        'tracking_metadata',
     ];
 
     protected $casts = [
@@ -40,10 +44,13 @@ class Email extends Model
         'cc_recipients' => 'array',
         'bcc_recipients' => 'array',
         'attachments' => 'array',
+        'tracking_metadata' => 'array',
         'sent_at' => 'datetime',
         'delivered_at' => 'datetime',
         'opened_at' => 'datetime',
         'clicked_at' => 'datetime',
+        'open_count' => 'integer',
+        'click_count' => 'integer',
     ];
 
     public function emailable(): MorphTo

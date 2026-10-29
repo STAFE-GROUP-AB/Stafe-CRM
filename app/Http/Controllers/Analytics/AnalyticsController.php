@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Analytics;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dashboard;
-use App\Models\CustomChart;
 use App\Models\AnalyticsHeatMap;
-use App\Models\RelationshipNetwork;
-use App\Models\PipelineVisualization;
+use App\Models\CustomChart;
+use App\Models\Dashboard;
+use App\Models\Deal;
 use App\Models\ForecastSimulation;
+use App\Models\PipelineStage;
+use App\Models\PipelineVisualization;
+use App\Models\RelationshipNetwork;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +20,7 @@ class AnalyticsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
+
         $dashboards = Dashboard::where('user_id', $user->id)
             ->orWhere('is_public', true)
             ->orWhere('tenant_id', $user->tenant_id)
@@ -64,7 +67,171 @@ class AnalyticsController extends Controller
 
     public function pipeline()
     {
-        return view('analytics.pipeline');
+        $owners = User::select('id', 'name')
+            ->whereHas('deals')
+            ->orderBy('name')
+            ->get();
+
+        return view('analytics.pipeline', compact('owners'));
+    }
+
+    /**
+     * Get Sankey diagram data for pipeline visualization.
+     */
+    public function getSankeyData(Request $request)
+    {
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+        $ownerId = $request->input('owner_id');
+        $minValue = $request->input('min_value', 0);
+        $dataMode = $request->input('data_mode', 'value');
+
+        $stages = PipelineStage::active()
+            ->ordered()
+            ->get();
+
+        if ($stages->isEmpty()) {
+            return response()->json([
+                'nodes' => [],
+                'links' => [],
+                'stats' => [
+                    'totalDeals' => 0,
+                    'totalValue' => 0,
+                    'wonValue' => 0,
+                    'lostValue' => 0,
+                    'conversionRate' => 0,
+                ],
+            ]);
+        }
+
+        $query = Deal::query()
+            ->with('pipelineStage');
+
+        if ($dateFrom) {
+            $query->where('created_at', '>=', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $query->where('created_at', '<=', $dateTo);
+        }
+
+        if ($ownerId) {
+            $query->where('owner_id', $ownerId);
+        }
+
+        if ($minValue > 0) {
+            $query->where('value', '>=', $minValue);
+        }
+
+        $deals = $query->get();
+
+        $nodes = [];
+        $nodeIndex = [];
+        $index = 0;
+
+        foreach ($stages as $stage) {
+            if ($stage->is_closed && $stage->is_won) {
+                $nodes[] = [
+                    'name' => $stage->name,
+                    'id' => $stage->id,
+                    'type' => 'won',
+                    'color' => $stage->color ?? '#22c55e',
+                ];
+            } elseif ($stage->is_closed && ! $stage->is_won) {
+                $nodes[] = [
+                    'name' => $stage->name,
+                    'id' => $stage->id,
+                    'type' => 'lost',
+                    'color' => $stage->color ?? '#ef4444',
+                ];
+            } else {
+                $nodes[] = [
+                    'name' => $stage->name,
+                    'id' => $stage->id,
+                    'type' => 'open',
+                    'color' => $stage->color ?? '#3b82f6',
+                ];
+            }
+            $nodeIndex[$stage->id] = $index++;
+        }
+
+        $links = [];
+        $stageDeals = [];
+        $stageValues = [];
+
+        foreach ($deals as $deal) {
+            $stageId = $deal->pipeline_stage_id;
+            if (! isset($stageDeals[$stageId])) {
+                $stageDeals[$stageId] = 0;
+                $stageValues[$stageId] = 0;
+            }
+            $stageDeals[$stageId]++;
+            $stageValues[$stageId] += $deal->value;
+        }
+
+        $orderedStages = $stages->sortBy('order')->values();
+
+        for ($i = 0; $i < count($orderedStages) - 1; $i++) {
+            $currentStage = $orderedStages[$i];
+            $nextStage = $orderedStages[$i + 1];
+
+            $currentStageId = $currentStage->id;
+            $nextStageId = $nextStage->id;
+
+            if (! isset($nodeIndex[$currentStageId]) || ! isset($nodeIndex[$nextStageId])) {
+                continue;
+            }
+
+            $flowDeals = $deals->filter(function ($deal) use ($orderedStages, $i) {
+                $stageOrder = $orderedStages->pluck('id')->search($deal->pipeline_stage_id);
+
+                return $stageOrder >= $i + 1;
+            });
+
+            $flowValue = $dataMode === 'value' ?
+                $flowDeals->sum('value') :
+                $flowDeals->count();
+
+            if ($flowValue > 0) {
+                $links[] = [
+                    'source' => $nodeIndex[$currentStageId],
+                    'target' => $nodeIndex[$nextStageId],
+                    'value' => max(1, $flowValue),
+                    'deals' => $flowDeals->count(),
+                    'totalValue' => $flowDeals->sum('value'),
+                ];
+            }
+        }
+
+        $wonDeals = $deals->where('status', 'won');
+        $lostDeals = $deals->where('status', 'lost');
+        $totalDeals = $deals->count();
+        $wonCount = $wonDeals->count();
+
+        $stats = [
+            'totalDeals' => $totalDeals,
+            'totalValue' => $deals->sum('value'),
+            'wonValue' => $wonDeals->sum('value'),
+            'lostValue' => $lostDeals->sum('value'),
+            'conversionRate' => $totalDeals > 0 ? round(($wonCount / $totalDeals) * 100, 1) : 0,
+            'averageDealValue' => $totalDeals > 0 ? round($deals->sum('value') / $totalDeals, 2) : 0,
+        ];
+
+        $stageStats = [];
+        foreach ($stages as $stage) {
+            $stageId = $stage->id;
+            $stageStats[$stage->name] = [
+                'count' => $stageDeals[$stageId] ?? 0,
+                'value' => $stageValues[$stageId] ?? 0,
+            ];
+        }
+
+        return response()->json([
+            'nodes' => $nodes,
+            'links' => $links,
+            'stats' => $stats,
+            'stageStats' => $stageStats,
+        ]);
     }
 
     public function forecasting()
@@ -74,7 +241,7 @@ class AnalyticsController extends Controller
 
     public function getDashboardData(Dashboard $dashboard)
     {
-        if (!$dashboard->isAccessibleBy(Auth::user())) {
+        if (! $dashboard->isAccessibleBy(Auth::user())) {
             abort(403);
         }
 
@@ -90,7 +257,7 @@ class AnalyticsController extends Controller
 
     public function getChartData(CustomChart $chart)
     {
-        if (!$chart->isAccessibleBy(Auth::user())) {
+        if (! $chart->isAccessibleBy(Auth::user())) {
             abort(403);
         }
 
@@ -161,13 +328,13 @@ class AnalyticsController extends Controller
     {
         $dataSource = $widget->data_source;
         $model = $dataSource['model'] ?? null;
-        
-        if (!$model || !class_exists($model)) {
+
+        if (! $model || ! class_exists($model)) {
             return [];
         }
 
         $query = $model::query();
-        
+
         // Apply tenant scoping if applicable
         if (Auth::user()->tenant_id && method_exists($model, 'scopeForTenant')) {
             $query->forTenant(Auth::user()->tenant_id);
@@ -179,7 +346,7 @@ class AnalyticsController extends Controller
             $field = $filter['field'] ?? null;
             $operator = $filter['operator'] ?? '=';
             $value = $filter['value'] ?? null;
-            
+
             if ($field && $value !== null) {
                 $query->where($field, $operator, $value);
             }
@@ -210,11 +377,11 @@ class AnalyticsController extends Controller
 
         if ($groupBy === 'created_at') {
             $query->selectRaw("DATE(created_at) as date, {$aggregateFunction}({$aggregateField}) as value")
-                  ->groupBy('date')
-                  ->orderBy('date');
+                ->groupBy('date')
+                ->orderBy('date');
         } else {
             $query->selectRaw("{$groupBy}, {$aggregateFunction}({$aggregateField}) as value")
-                  ->groupBy($groupBy);
+                ->groupBy($groupBy);
         }
 
         return $query->get()->toArray();
@@ -226,7 +393,7 @@ class AnalyticsController extends Controller
         $aggregateField = $dataSource['aggregate_field'] ?? '*';
 
         $result = $query->selectRaw("{$aggregateFunction}({$aggregateField}) as value")->first();
-        
+
         return [
             'value' => $result->value ?? 0,
             'label' => $dataSource['label'] ?? 'Total',
@@ -239,20 +406,20 @@ class AnalyticsController extends Controller
         $limit = $dataSource['limit'] ?? 10;
 
         return $query->select($fields)
-                     ->orderBy('created_at', 'desc')
-                     ->limit($limit)
-                     ->get()
-                     ->toArray();
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->toArray();
     }
 
     private function getHeatmapWidgetData($query, $dataSource)
     {
         // Simplified heatmap data - would be more complex in practice
         return $query->selectRaw('DATE(created_at) as date, COUNT(*) as value')
-                     ->groupBy('date')
-                     ->orderBy('date')
-                     ->get()
-                     ->toArray();
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->toArray();
     }
 
     private function getListWidgetData($query, $dataSource)
@@ -261,9 +428,9 @@ class AnalyticsController extends Controller
         $limit = $dataSource['limit'] ?? 5;
 
         return $query->select($fields)
-                     ->orderBy('created_at', 'desc')
-                     ->limit($limit)
-                     ->get()
-                     ->toArray();
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->toArray();
     }
 }

@@ -336,13 +336,119 @@ class ContactManager extends Component
         $this->selectAll = false;
     }
 
-    public function exportSelected()
+    public function exportSelected(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        // TODO: Implement export functionality
-        $this->dispatch('notify', [
-            'type' => 'info',
-            'message' => 'Export functionality coming soon!'
+        return response()->streamDownload(function () {
+            $handle = fopen('php://output', 'w');
+
+            // Write CSV header with BOM for Excel UTF-8 compatibility
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, $this->getCsvHeaders());
+
+            // Get contacts to export
+            $contacts = $this->getContactsForExport();
+
+            foreach ($contacts as $contact) {
+                fputcsv($handle, $this->formatContactForCsv($contact));
+            }
+
+            fclose($handle);
+        }, $this->generateExportFilename(), [
+            'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
+    }
+
+    /**
+     * Get contacts for CSV export based on selection or current filters
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Contact>
+     */
+    private function getContactsForExport(): \Illuminate\Database\Eloquent\Collection
+    {
+        $query = Contact::with(['company', 'owner']);
+
+        if (!empty($this->selectedIds)) {
+            return $query->whereIn('id', $this->selectedIds)->get();
+        }
+
+        // Export all contacts matching current filters
+        return $query
+            ->when($this->search, function ($q) {
+                $q->where(function ($query) {
+                    $query->where('first_name', 'like', "%{$this->search}%")
+                        ->orWhere('last_name', 'like', "%{$this->search}%")
+                        ->orWhere('email', 'like', "%{$this->search}%")
+                        ->orWhere('phone', 'like', "%{$this->search}%")
+                        ->orWhere('mobile', 'like', "%{$this->search}%");
+                });
+            })
+            ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
+            ->when($this->companyFilter, fn ($q) => $q->where('company_id', $this->companyFilter))
+            ->when($this->ownerFilter, fn ($q) => $q->where('owner_id', $this->ownerFilter))
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Get CSV column headers
+     *
+     * @return array<int, string>
+     */
+    private function getCsvHeaders(): array
+    {
+        return [
+            'First Name',
+            'Last Name',
+            'Email',
+            'Phone',
+            'Mobile',
+            'Title',
+            'Department',
+            'Company',
+            'Status',
+            'Source',
+            'City',
+            'Country',
+            'Lifetime Value',
+            'Owner',
+            'Created At',
+        ];
+    }
+
+    /**
+     * Format a contact record for CSV export
+     *
+     * @return array<int, string|null>
+     */
+    private function formatContactForCsv(Contact $contact): array
+    {
+        return [
+            $contact->first_name,
+            $contact->last_name,
+            $contact->email,
+            $contact->phone,
+            $contact->mobile,
+            $contact->title,
+            $contact->department,
+            $contact->company?->name,
+            ucfirst($contact->status ?? ''),
+            $contact->source,
+            $contact->city,
+            $contact->country,
+            $contact->lifetime_value ? number_format((float) $contact->lifetime_value, 2, '.', '') : null,
+            $contact->owner?->name,
+            $contact->created_at?->format('Y-m-d H:i:s'),
+        ];
+    }
+
+    /**
+     * Generate a unique filename for the CSV export
+     */
+    private function generateExportFilename(): string
+    {
+        $timestamp = now()->format('Y-m-d_His');
+
+        return "contacts_export_{$timestamp}.csv";
     }
 
     private function resetForm()

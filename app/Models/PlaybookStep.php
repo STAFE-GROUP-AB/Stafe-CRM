@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PlaybookStep extends Model
 {
@@ -38,6 +39,52 @@ class PlaybookStep extends Model
     public function playbook(): BelongsTo
     {
         return $this->belongsTo(SalesPlaybook::class, 'playbook_id');
+    }
+
+    public function executions(): HasMany
+    {
+        return $this->hasMany(PlaybookStepExecution::class, 'step_id');
+    }
+
+    public function completedExecutions(): HasMany
+    {
+        return $this->hasMany(PlaybookStepExecution::class, 'step_id')
+            ->where('status', 'completed');
+    }
+
+    public function skippedExecutions(): HasMany
+    {
+        return $this->hasMany(PlaybookStepExecution::class, 'step_id')
+            ->where('status', 'skipped');
+    }
+
+    public function getCompletionRate(): float
+    {
+        $total = $this->executions()->count();
+
+        if ($total === 0) {
+            return 0;
+        }
+
+        return round(($this->completedExecutions()->count() / $total) * 100, 2);
+    }
+
+    public function getSkipRate(): float
+    {
+        $total = $this->executions()->count();
+
+        if ($total === 0) {
+            return 0;
+        }
+
+        return round(($this->skippedExecutions()->count() / $total) * 100, 2);
+    }
+
+    public function getAverageDurationSeconds(): int
+    {
+        return (int) $this->completedExecutions()
+            ->whereNotNull('duration_seconds')
+            ->avg('duration_seconds');
     }
 
     // Type helpers

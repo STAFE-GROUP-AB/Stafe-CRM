@@ -85,9 +85,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('workflows')->name('workflows.')->group(function () {
         Route::get('/', [App\Http\Controllers\WorkflowController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\WorkflowController::class, 'create'])->name('create');
+        Route::get('/builder', App\Livewire\WorkflowBuilder::class)->name('builder');
         Route::post('/', [App\Http\Controllers\WorkflowController::class, 'store'])->name('store');
         Route::get('/{workflow}', [App\Http\Controllers\WorkflowController::class, 'show'])->name('show');
         Route::get('/{workflow}/edit', [App\Http\Controllers\WorkflowController::class, 'edit'])->name('edit');
+        Route::get('/{workflow}/builder', App\Livewire\WorkflowBuilder::class)->name('builder.edit');
         Route::put('/{workflow}', [App\Http\Controllers\WorkflowController::class, 'update'])->name('update');
         Route::delete('/{workflow}', [App\Http\Controllers\WorkflowController::class, 'destroy'])->name('destroy');
         Route::post('/{workflow}/execute', [App\Http\Controllers\WorkflowController::class, 'execute'])->name('execute');
@@ -128,6 +130,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/emails/compose', \App\Livewire\EmailManager::class)->name('emails.compose')->defaults('action', 'compose');
     Route::get('/emails/{email}', \App\Livewire\EmailManager::class)->name('emails.show')->defaults('action', 'show');
     
+    // Email Tracking (public routes - no auth required)
+    Route::get('/track/email/open/{token}', [\App\Http\Controllers\EmailTrackingController::class, 'trackOpen'])->name('email.track.open');
+    Route::get('/track/email/click/{token}', [\App\Http\Controllers\EmailTrackingController::class, 'trackClick'])->name('email.track.click');
+    Route::get('/track/email/stats/{token}', [\App\Http\Controllers\EmailTrackingController::class, 'getStats'])->name('email.track.stats');
+    
     // Team Collaboration
     Route::get('/teams', \App\Livewire\TeamManager::class)->name('teams.index');
     Route::get('/teams/create', \App\Livewire\TeamManager::class)->name('teams.create')->defaults('action', 'create');
@@ -154,12 +161,15 @@ Route::prefix('sales-enablement')->name('sales-enablement.')->middleware('auth')
     Route::get('/quotes', \App\Livewire\QuoteBuilder::class)->name('quotes');
     Route::get('/content-library', \App\Livewire\SalesContentLibrary::class)->name('content-library');
     Route::get('/battle-cards', \App\Livewire\BattleCardsManager::class)->name('battle-cards');
+    Route::get('/battle-cards/analytics', \App\Livewire\BattleCardAnalytics::class)->name('battle-card-analytics');
     Route::get('/playbooks', \App\Livewire\SalesPlaybooksManager::class)->name('playbooks');
     Route::get('/gamification', \App\Livewire\GamificationDashboard::class)->name('gamification');
     
     // Quote-specific routes
     Route::get('/quotes/{quote}/preview', [SalesEnablementController::class, 'previewQuote'])->name('quotes.preview');
     Route::get('/quotes/{quote}/pdf', [SalesEnablementController::class, 'downloadQuotePdf'])->name('quotes.pdf');
+    Route::get('/quotes/{quote}/pdf/stream', [SalesEnablementController::class, 'streamQuotePdf'])->name('quotes.pdf.stream');
+    Route::post('/quotes/{quote}/email', [SalesEnablementController::class, 'emailQuote'])->name('quotes.email');
     Route::get('/quotes/{quote}/sign', [SalesEnablementController::class, 'signQuote'])->name('quotes.sign');
     Route::post('/quotes/{quote}/signature', [SalesEnablementController::class, 'saveSignature'])->name('quotes.signature');
     
@@ -168,8 +178,11 @@ Route::prefix('sales-enablement')->name('sales-enablement.')->middleware('auth')
     Route::get('/content/{content}/preview', [SalesEnablementController::class, 'previewContent'])->name('content.preview');
     
     // Playbook execution
-    Route::get('/playbooks/{execution}/execute', [SalesEnablementController::class, 'executePlaybook'])->name('playbook-execution');
+    Route::get('/playbooks/{execution}/execute', \App\Livewire\PlaybookExecutionTracker::class)->name('playbook-execution');
     Route::post('/playbooks/{execution}/complete-step', [SalesEnablementController::class, 'completePlaybookStep'])->name('playbook-step.complete');
+
+    // Playbook analytics
+    Route::get('/playbooks/analytics', \App\Livewire\PlaybookAnalytics::class)->name('playbook-analytics');
 });
 
 // Customer Experience Platform Routes
@@ -199,6 +212,7 @@ Route::prefix('analytics')->name('analytics.')->middleware('auth')->group(functi
     Route::get('/api/heat-maps/{heatMap}/data', [AnalyticsController::class, 'getHeatMapData'])->name('api.heatmap-data');
     Route::get('/api/relationships/{network}/data', [AnalyticsController::class, 'getRelationshipNetworkData'])->name('api.relationship-data');
     Route::get('/api/pipeline/{visualization}/data', [AnalyticsController::class, 'getPipelineVisualizationData'])->name('api.pipeline-data');
+    Route::get('/api/pipeline/sankey', [AnalyticsController::class, 'getSankeyData'])->name('api.sankey-data');
     Route::get('/api/forecasting/{simulation}/data', [AnalyticsController::class, 'getForecastSimulationData'])->name('api.forecast-data');
 });
 

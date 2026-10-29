@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Deal extends Model
 {
@@ -89,6 +89,23 @@ class Deal extends Model
         return $this->morphMany(ActivityLog::class, 'loggable');
     }
 
+    public function playbookExecutions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PlaybookExecution::class);
+    }
+
+    public function activePlaybookExecutions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PlaybookExecution::class)
+            ->where('status', 'in_progress');
+    }
+
+    public function completedPlaybookExecutions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PlaybookExecution::class)
+            ->where('status', 'completed');
+    }
+
     public function getDisplayNameAttribute(): string
     {
         return $this->name;
@@ -96,7 +113,7 @@ class Deal extends Model
 
     public function getFormattedValueAttribute(): string
     {
-        return number_format($this->value, 2) . ' ' . $this->currency;
+        return number_format($this->value, 2).' '.$this->currency;
     }
 
     public function getWeightedValueAttribute(): float
@@ -106,7 +123,7 @@ class Deal extends Model
 
     public function getFormattedWeightedValueAttribute(): string
     {
-        return number_format($this->getWeightedValueAttribute(), 2) . ' ' . $this->currency;
+        return number_format($this->getWeightedValueAttribute(), 2).' '.$this->currency;
     }
 
     public function isOpen(): bool

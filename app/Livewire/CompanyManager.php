@@ -4,63 +4,94 @@ namespace App\Livewire;
 
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
-use Livewire\WithPagination;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 #[Title('Companies')]
 class CompanyManager extends Component
 {
-    use WithPagination, WithFileUploads;
+    use WithFileUploads, WithPagination;
 
     // View state
     public $view = 'list'; // list, create, edit, show
+
     public $selectedCompany = null;
-    
+
     // Search and filters
     public $search = '';
+
     public $statusFilter = '';
+
     public $industryFilter = '';
+
     public $ownerFilter = '';
+
     public $perPage = 10;
-    
+
     // Form fields
     public $name = '';
+
     public $email = '';
+
     public $phone = '';
+
     public $website = '';
+
     public $industry = '';
+
     public $company_size = '';
+
     public $address = '';
+
     public $city = '';
+
     public $state = '';
+
     public $postal_code = '';
+
     public $country = '';
+
     public $description = '';
+
     public $logo_url = '';
+
     public $logo = null;
+
     public $owner_id = '';
+
     public $annual_revenue = '';
+
     public $number_of_employees = '';
+
     public $founded_year = '';
+
     public $tax_id = '';
+
     public $linkedin_url = '';
+
     public $twitter_url = '';
+
     public $facebook_url = '';
+
     public $custom_fields = [];
-    
+
     // Bulk operations
     public $selectAll = false;
+
     public $selectedIds = [];
+
     public $bulkAction = '';
-    
+
     // Modal states
     public $showDeleteModal = false;
+
     public $showBulkDeleteModal = false;
+
     public $companyToDelete = null;
 
     protected $queryString = [
@@ -98,10 +129,10 @@ class CompanyManager extends Component
     public function mount($company = null)
     {
         $this->owner_id = auth()->id();
-        
+
         // Handle route actions
         $action = request()->route()->defaults['action'] ?? null;
-        
+
         if ($action === 'create') {
             $this->create();
         } elseif ($action === 'show' && $company) {
@@ -109,9 +140,9 @@ class CompanyManager extends Component
         } elseif ($action === 'edit' && $company) {
             $this->edit($company);
         }
-        
+
         // Also check query parameter for backward compatibility
-        if (!$action && request()->query('action') === 'create') {
+        if (! $action && request()->query('action') === 'create') {
             $this->create();
         }
     }
@@ -137,10 +168,10 @@ class CompanyManager extends Component
         return Company::with(['owner', 'contacts'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%')
-                        ->orWhere('phone', 'like', '%' . $this->search . '%')
-                        ->orWhere('website', 'like', '%' . $this->search . '%');
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%')
+                        ->orWhere('phone', 'like', '%'.$this->search.'%')
+                        ->orWhere('website', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->industryFilter, function ($query) {
@@ -174,7 +205,7 @@ class CompanyManager extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Company created successfully!'
+            'message' => 'Company created successfully!',
         ]);
 
         $this->view = 'list';
@@ -214,7 +245,7 @@ class CompanyManager extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Company updated successfully!'
+            'message' => 'Company updated successfully!',
         ]);
 
         $this->view = 'show';
@@ -234,18 +265,18 @@ class CompanyManager extends Component
             if ($this->companyToDelete->logo_url) {
                 Storage::disk('public')->delete($this->companyToDelete->logo_url);
             }
-            
+
             $this->companyToDelete->delete();
-            
+
             $this->dispatch('notify', [
                 'type' => 'success',
-                'message' => 'Company deleted successfully!'
+                'message' => 'Company deleted successfully!',
             ]);
         }
 
         $this->showDeleteModal = false;
         $this->companyToDelete = null;
-        
+
         if ($this->view === 'show' || $this->view === 'edit') {
             $this->view = 'list';
         }
@@ -277,8 +308,9 @@ class CompanyManager extends Component
         if (empty($this->selectedIds)) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Please select at least one company.'
+                'message' => 'Please select at least one company.',
             ]);
+
             return;
         }
 
@@ -295,7 +327,7 @@ class CompanyManager extends Component
     public function bulkDelete()
     {
         $companies = Company::whereIn('id', $this->selectedIds)->get();
-        
+
         foreach ($companies as $company) {
             if ($company->logo_url) {
                 Storage::disk('public')->delete($company->logo_url);
@@ -305,7 +337,7 @@ class CompanyManager extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => count($this->selectedIds) . ' companies deleted successfully!'
+            'message' => count($this->selectedIds).' companies deleted successfully!',
         ]);
 
         $this->showBulkDeleteModal = false;
@@ -313,13 +345,135 @@ class CompanyManager extends Component
         $this->selectAll = false;
     }
 
-    public function exportSelected()
+    public function exportSelected(): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        // TODO: Implement export functionality
-        $this->dispatch('notify', [
-            'type' => 'info',
-            'message' => 'Export functionality coming soon!'
+        $companies = $this->getCompaniesForExport();
+
+        if ($companies->isEmpty()) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'No companies to export.',
+            ]);
+
+            return response()->streamDownload(function () {
+                // Empty response
+            }, 'companies.csv');
+        }
+
+        $filename = 'companies-'.now()->format('Y-m-d-His').'.csv';
+
+        return response()->streamDownload(function () use ($companies) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, $this->getCsvHeaders());
+
+            foreach ($companies as $company) {
+                fputcsv($handle, $this->formatCompanyForCsv($company));
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
+    }
+
+    /**
+     * Get companies for export based on selection or current filters.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Company>
+     */
+    private function getCompaniesForExport(): \Illuminate\Database\Eloquent\Collection
+    {
+        if (! empty($this->selectedIds)) {
+            return Company::with('owner')
+                ->whereIn('id', $this->selectedIds)
+                ->get();
+        }
+
+        return Company::with('owner')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', "%{$this->search}%")
+                        ->orWhere('email', 'like', "%{$this->search}%")
+                        ->orWhere('phone', 'like', "%{$this->search}%")
+                        ->orWhere('website', 'like', "%{$this->search}%");
+                });
+            })
+            ->when($this->industryFilter, function ($query) {
+                $query->where('industry', $this->industryFilter);
+            })
+            ->when($this->ownerFilter, function ($query) {
+                $query->where('owner_id', $this->ownerFilter);
+            })
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Get CSV header row.
+     *
+     * @return array<int, string>
+     */
+    private function getCsvHeaders(): array
+    {
+        return [
+            'Name',
+            'Email',
+            'Phone',
+            'Website',
+            'Industry',
+            'Address',
+            'City',
+            'State',
+            'Country',
+            'Postal Code',
+            'Annual Revenue',
+            'Currency',
+            'Employees',
+            'Status',
+            'Owner',
+            'Created At',
+        ];
+    }
+
+    /**
+     * Format a company record for CSV export.
+     *
+     * @return array<int, string|null>
+     */
+    private function formatCompanyForCsv(Company $company): array
+    {
+        return [
+            $company->name,
+            $company->email,
+            $company->phone,
+            $company->website,
+            $company->industry,
+            $company->address,
+            $company->city,
+            $company->state,
+            $company->country,
+            $company->postal_code,
+            $this->formatRevenue($company->annual_revenue),
+            $company->currency,
+            $company->employee_count ? (string) $company->employee_count : '',
+            $company->status,
+            $company->owner?->name ?? '',
+            $company->created_at?->format('Y-m-d H:i:s') ?? '',
+        ];
+    }
+
+    /**
+     * Format revenue for CSV display.
+     */
+    private function formatRevenue(?string $revenue): string
+    {
+        if (! $revenue) {
+            return '';
+        }
+
+        return number_format((float) $revenue, 2, '.', '');
     }
 
     private function resetForm()
@@ -329,9 +483,9 @@ class CompanyManager extends Component
             'address', 'city', 'state', 'postal_code', 'country', 'description',
             'logo', 'logo_url', 'annual_revenue', 'number_of_employees',
             'founded_year', 'tax_id', 'linkedin_url', 'twitter_url',
-            'facebook_url', 'custom_fields'
+            'facebook_url', 'custom_fields',
         ]);
-        
+
         $this->owner_id = auth()->id();
         $this->resetValidation();
     }
@@ -404,7 +558,7 @@ class CompanyManager extends Component
             'Transportation',
             'Energy',
             'Hospitality',
-            'Other'
+            'Other',
         ];
     }
 
@@ -417,7 +571,7 @@ class CompanyManager extends Component
             '201-500' => '201-500 employees',
             '501-1000' => '501-1000 employees',
             '1001-5000' => '1001-5000 employees',
-            '5001+' => '5001+ employees'
+            '5001+' => '5001+ employees',
         ];
     }
 }

@@ -3,18 +3,24 @@
 namespace App\Livewire;
 
 use App\Models\BattleCard;
+use App\Models\BattleCardView;
 use App\Models\CompetitiveIntelligence;
+use App\Models\Deal;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Layout('layouts.app')]
 class BattleCardsManager extends Component
 {
     use WithPagination;
 
     public $showCreateModal = false;
+    public $showAnalyticsModal = false;
     public $editingCard = null;
     public $selectedCard = null;
-    
+    public $selectedDealId = null;
+
     // Form fields
     public $title = '';
     public $competitor_name = '';
@@ -59,9 +65,15 @@ class BattleCardsManager extends Component
             ->groupBy('competitor_name')
             ->get();
 
+        // Get available deals for deal context selection
+        $availableDeals = Deal::where('status', 'open')
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return view('livewire.sales-enablement.battle-cards', [
             'battleCards' => $battleCards,
             'competitorInsights' => $competitorInsights,
+            'availableDeals' => $availableDeals,
         ]);
     }
 
@@ -93,9 +105,50 @@ class BattleCardsManager extends Component
     public function viewCard(BattleCard $card)
     {
         $this->selectedCard = $card;
-        
-        // Record view analytics
-        $card->recordView(auth()->user());
+
+        // Get deal if selected
+        $deal = $this->selectedDealId ? Deal::find($this->selectedDealId) : null;
+        $context = $deal ? 'deal_context' : 'general_view';
+
+        // Record view analytics with deal context
+        $card->recordView(auth()->user(), $deal, $context);
+    }
+
+    public function viewCardForDeal(BattleCard $card, int $dealId)
+    {
+        $this->selectedDealId = $dealId;
+        $this->viewCard($card);
+    }
+
+    public function shareCard(BattleCard $card, string $method = 'copy')
+    {
+        $deal = $this->selectedDealId ? Deal::find($this->selectedDealId) : null;
+
+        // Record share analytics
+        $card->recordShare(auth()->user(), $method, $deal);
+
+        $this->dispatch('card-shared', [
+            'cardId' => $card->id,
+            'method' => $method,
+        ]);
+
+        session()->flash('message', 'Battle card shared successfully.');
+    }
+
+    public function showAnalytics()
+    {
+        $this->showAnalyticsModal = true;
+    }
+
+    public function getAnalyticsData(): array
+    {
+        return [
+            'mostViewed' => BattleCardView::getMostViewed(10, 30),
+            'viewTrends' => BattleCardView::getViewTrends(30),
+            'usageByUser' => BattleCardView::getUsageByUser(30),
+            'recentlyViewed' => BattleCardView::getRecentlyViewed(10),
+            'effectiveness' => BattleCardView::getOverallEffectiveness(),
+        ];
     }
 
     public function saveCard()
@@ -242,7 +295,9 @@ class BattleCardsManager extends Component
     public function closeModal()
     {
         $this->showCreateModal = false;
+        $this->showAnalyticsModal = false;
         $this->selectedCard = null;
+        $this->selectedDealId = null;
         $this->resetForm();
     }
 

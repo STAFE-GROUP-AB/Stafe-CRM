@@ -2,109 +2,203 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\CustomerHealthScore;
 use App\Models\Contact;
+use App\Models\CustomerHealthScore;
+use App\Models\CustomerHealthScoreHistory;
+use App\Services\CustomerHealthService;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class CustomerHealthDashboard extends Component
 {
-    public $selectedContact = null;
-    public $healthScoreDetails = null;
-    public $filterStatus = '';
-    
+    use WithPagination;
+
+    public ?int $selectedHealthScoreId = null;
+    public ?CustomerHealthScore $healthScoreDetails = null;
+    public string $filterStatus = '';
+    public string $filterTrend = '';
+    public string $searchQuery = '';
+    public string $sortField = 'overall_score';
+    public string $sortDirection = 'asc';
+
+    protected $queryString = [
+        'filterStatus' => ['except' => ''],
+        'filterTrend' => ['except' => ''],
+        'searchQuery' => ['except' => ''],
+        'sortField' => ['except' => 'overall_score'],
+        'sortDirection' => ['except' => 'asc'],
+    ];
+
     public function render()
     {
-        $healthScores = CustomerHealthScore::with('contact')
-            ->when($this->filterStatus, fn($query) => 
-                $query->where('health_status', $this->filterStatus)
-            )
-            ->latest('last_calculated_at')
-            ->take(20)
-            ->get();
+        $healthService = app(CustomerHealthService::class);
 
-        $stats = [
-            'total_customers' => CustomerHealthScore::count(),
-            'excellent' => CustomerHealthScore::where('health_status', 'excellent')->count(),
-            'good' => CustomerHealthScore::where('health_status', 'good')->count(),
-            'at_risk' => CustomerHealthScore::where('health_status', 'at_risk')->count(),
-            'critical' => CustomerHealthScore::where('health_status', 'critical')->count(),
-            'avg_score' => CustomerHealthScore::avg('overall_score') ?? 0
-        ];
+        $query = CustomerHealthScore::with('contact')
+            ->when($this->filterStatus, fn($q) => $q->where('health_status', $this->filterStatus))
+            ->when($this->filterTrend, fn($q) => $q->where('trend', $this->filterTrend))
+            ->when($this->searchQuery, function ($q) {
+                $q->whereHas('contact', function ($contactQuery) {
+                    $contactQuery->where('first_name', 'like', "%{$this->searchQuery}%")
+                        ->orWhere('last_name', 'like', "%{$this->searchQuery}%")
+                        ->orWhere('email', 'like', "%{$this->searchQuery}%");
+                });
+            })
+            ->orderBy($this->sortField, $this->sortDirection);
 
-        return view('livewire.customer-health-dashboard', compact('healthScores', 'stats'));
-    }
+        $healthScores = $query->paginate(20);
 
-    public function viewDetails($healthScoreId)
-    {
-        $this->healthScoreDetails = CustomerHealthScore::with('contact')->find($healthScoreId);
-    }
+        $stats = $healthService->getStatistics();
 
-    public function recalculateScore($healthScoreId)
-    {
-        $healthScore = CustomerHealthScore::find($healthScoreId);
-        if ($healthScore) {
-            $healthScore->recalculate();
-            $this->dispatch('score-recalculated');
-        }
-    }
+        $atRiskContacts = $healthService->getAtRiskContacts(5);
+        $decliningScores = $healthService->getDecliningScores(5);
 
-    public function recalculateAllScores()
-    {
-        CustomerHealthScore::chunk(100, function($scores) {
-            foreach ($scores as $score) {
-                if ($score->needsUpdate()) {
-                    $score->recalculate();
-                }
-            }
-        });
-        
-        $this->dispatch('all-scores-recalculated');
-    }
-
-    public function generateHealthScore($contactId)
-    {
-        $contact = Contact::find($contactId);
-        if (!$contact) {
-            return;
+        $scoreHistory = [];
+        if ($this->healthScoreDetails) {
+            $scoreHistory = $healthService->getScoreTrend(
+                $this->healthScoreDetails->contact,
+                30
+            )->map(fn($h) => [
+                'date' => $h->created_at->format('M d'),
+                'score' => $h->overall_score,
+            ])->toArray();
         }
 
-        // Check if health score already exists
-        $existingScore = CustomerHealthScore::where('contact_id', $contactId)->first();
-        
-        if ($existingScore) {
-            $existingScore->recalculate();
-        } else {
-            // Create new health score
-            $healthScore = new CustomerHealthScore([
-                'contact_id' => $contactId,
-                'overall_score' => 75, // Default starting score
-                'score_breakdown' => [
-                    'engagement' => 75,
-                    'support_satisfaction' => 80,
-                    'product_usage' => 70,
-                    'payment_history' => 85,
-                    'communication_frequency' => 65
-                ],
-                'health_status' => 'good',
-                'risk_factors' => [],
-                'improvement_suggestions' => [],
-                'last_calculated_at' => now()
-            ]);
-            
-            $healthScore->save();
-            $healthScore->recalculate();
-        }
-
-        $this->dispatch('health-score-generated');
+        return view('livewire.customer-health-dashboard', compact(
+            'healthScores',
+            'stats',
+            'atRiskContacts',
+            'decliningScores',
+            'scoreHistory'
+        ));
     }
 
-    public function closeDetails()
+    public function viewDetails(int $healthScoreId): void
     {
+        $this->selectedHealthScoreId = $healthScoreId;
+        $this->healthScoreDetails = CustomerHealthScore::with(['contact', 'history' => function ($q) {
+            $q->orderBy('created_at', 'desc')->limit(10);
+        }])->find($healthScoreId);
+    }
+
+    public function closeDetails(): void
+    {
+        $this->selectedHealthScoreId = null;
         $this->healthScoreDetails = null;
     }
 
-    public function updatedFilterStatus()
+    public function recalculateScore(int $healthScoreId): void
     {
-        // Component will re-render automatically
+        $healthScore = CustomerHealthScore::find($healthScoreId);
+
+        if (!$healthScore) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Halsopoang hittades inte.',
+            ]);
+
+            return;
+        }
+
+        $healthScore->recalculate('manual');
+
+        if ($this->selectedHealthScoreId === $healthScoreId) {
+            $this->healthScoreDetails = $healthScore->fresh(['contact', 'history']);
+        }
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Halsopoang har beraknats om.',
+        ]);
+    }
+
+    public function recalculateAllScores(): void
+    {
+        $healthService = app(CustomerHealthService::class);
+        $results = $healthService->calculateForAllContacts('manual');
+
+        $this->dispatch('notify', [
+            'type' => $results['failed'] > 0 ? 'warning' : 'success',
+            'message' => "Beraknade {$results['processed']} halsopoang. {$results['failed']} misslyckades.",
+        ]);
+    }
+
+    public function generateHealthScore(int $contactId): void
+    {
+        $contact = Contact::find($contactId);
+
+        if (!$contact) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Kontakt hittades inte.',
+            ]);
+
+            return;
+        }
+
+        $healthService = app(CustomerHealthService::class);
+        $healthService->calculateForContact($contact, 'manual');
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "Halsopoang skapad for {$contact->full_name}.",
+        ]);
+    }
+
+    public function generateMissingHealthScores(): void
+    {
+        $healthService = app(CustomerHealthService::class);
+        $processed = 0;
+
+        Contact::whereDoesntHave('customerHealthScore')
+            ->chunk(50, function ($contacts) use ($healthService, &$processed) {
+                foreach ($contacts as $contact) {
+                    try {
+                        $healthService->calculateForContact($contact, 'initial');
+                        $processed++;
+                    } catch (\Exception $e) {
+                        // Log and continue
+                    }
+                }
+            });
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "Skapade {$processed} nya halsopoang.",
+        ]);
+    }
+
+    public function sortBy(string $field): void
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+    public function resetFilters(): void
+    {
+        $this->filterStatus = '';
+        $this->filterTrend = '';
+        $this->searchQuery = '';
+        $this->sortField = 'overall_score';
+        $this->sortDirection = 'asc';
+        $this->resetPage();
+    }
+
+    public function updatedSearchQuery(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterTrend(): void
+    {
+        $this->resetPage();
     }
 }

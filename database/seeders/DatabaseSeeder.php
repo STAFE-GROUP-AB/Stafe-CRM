@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             EmailTemplateSeeder::class,
             IntegrationSeeder::class,
             SubscriptionPlanSeeder::class,
+            ScoringFactorsSeeder::class,
             DemoDataSeeder::class,
             SampleContactsSeeder::class,
         ]);

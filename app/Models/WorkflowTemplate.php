@@ -16,12 +16,14 @@ class WorkflowTemplate extends Model
         'description',
         'trigger_type',
         'trigger_config',
+        'visual_config',
         'is_active',
         'created_by',
     ];
 
     protected $casts = [
         'trigger_config' => 'array',
+        'visual_config' => 'array',
         'is_active' => 'boolean',
     ];
 

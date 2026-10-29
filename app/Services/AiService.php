@@ -8,6 +8,7 @@ use App\Models\UserAiConfiguration;
 use App\Models\Contact;
 use App\Models\LeadScore;
 use App\Models\ScoringFactor;
+use App\Services\LeadScoringService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -119,81 +120,14 @@ class AiService
 
     /**
      * Calculate lead score for a contact
+     *
+     * Delegates to the dedicated LeadScoringService for comprehensive scoring
      */
     public function calculateLeadScore(Contact $contact, ?UserAiConfiguration $config = null): LeadScore
     {
-        $factors = ScoringFactor::active()->ordered()->get();
-        $totalScore = 0;
-        $factorScores = [];
-        $explanations = [];
+        $scoringService = new LeadScoringService();
 
-        foreach ($factors as $factor) {
-            $score = $this->calculateFactorScore($contact, $factor);
-            $weightedScore = $score * $factor->weight;
-            $totalScore += $weightedScore;
-
-            $factorScores[$factor->name] = [
-                'raw_score' => $score,
-                'weight' => $factor->weight,
-                'weighted_score' => $weightedScore,
-                'display_name' => $factor->display_name
-            ];
-
-            $explanations[] = $this->generateFactorExplanation($factor, $score);
-        }
-
-        // Normalize to 0-100 scale
-        $normalizedScore = min(100, max(0, round($totalScore)));
-        
-        // Determine grade
-        $grade = $this->scoreToGrade($normalizedScore);
-
-        // Create or update lead score
-        $leadScore = LeadScore::updateOrCreate(
-            ['contact_id' => $contact->id],
-            [
-                'score' => $normalizedScore,
-                'probability' => $this->scoreToProbability($normalizedScore),
-                'grade' => $grade,
-                'factors' => $factorScores,
-                'explanations' => $explanations,
-                'model_version' => '1.0',
-                'last_calculated_at' => now(),
-                'ai_model_id' => $config?->getDefaultModel('lead_scoring'),
-            ]
-        );
-
-        return $leadScore;
-    }
-
-    /**
-     * Calculate individual factor score
-     */
-    private function calculateFactorScore(Contact $contact, ScoringFactor $factor): float
-    {
-        return match($factor->calculation_method) {
-            'rule_based' => $this->calculateRuleBasedScore($contact, $factor),
-            'ml_model' => $this->calculateMLScore($contact, $factor),
-            'api_call' => $this->calculateAPIScore($contact, $factor),
-            default => 50.0 // Default neutral score
-        };
-    }
-
-    /**
-     * Calculate rule-based score
-     */
-    private function calculateRuleBasedScore(Contact $contact, ScoringFactor $factor): float
-    {
-        $config = $factor->configuration;
-
-        return match($factor->name) {
-            'company_size' => $this->calculateCompanySizeScore($contact, $config),
-            'industry_match' => $this->calculateIndustryScore($contact, $config),
-            'email_engagement' => $this->calculateEmailEngagementScore($contact, $config),
-            'website_activity' => $this->calculateWebsiteActivityScore($contact, $config),
-            'lead_source_quality' => $this->calculateLeadSourceScore($contact, $config),
-            default => 50.0
-        };
+        return $scoringService->calculateScore($contact, $config);
     }
 
     /**
@@ -262,101 +196,6 @@ class AiService
         }
 
         throw new \Exception('Google AI API test failed: ' . $response->body());
-    }
-
-    // Helper methods for scoring calculations
-    private function calculateCompanySizeScore(Contact $contact, array $config): float
-    {
-        $companySize = $contact->company?->employee_count ?? 0;
-        
-        foreach ($config['size_ranges'] as $range => $score) {
-            if (str_contains($range, '-')) {
-                [$min, $max] = explode('-', $range);
-                if ($companySize >= (int)$min && $companySize <= (int)$max) {
-                    return $score;
-                }
-            } elseif (str_contains($range, '+')) {
-                $min = (int)str_replace('+', '', $range);
-                if ($companySize >= $min) {
-                    return $score;
-                }
-            }
-        }
-        
-        return 0;
-    }
-
-    private function calculateIndustryScore(Contact $contact, array $config): float
-    {
-        $industry = strtolower($contact->company?->industry ?? '');
-        
-        foreach ($config['target_industries'] as $index => $targetIndustry) {
-            if (str_contains($industry, $targetIndustry)) {
-                return $config['scores'][$index] ?? 0;
-            }
-        }
-        
-        return 0;
-    }
-
-    private function calculateEmailEngagementScore(Contact $contact, array $config): float
-    {
-        // This would integrate with actual email metrics
-        // For now, return a placeholder score
-        return rand(30, 90);
-    }
-
-    private function calculateWebsiteActivityScore(Contact $contact, array $config): float
-    {
-        // This would integrate with analytics data
-        // For now, return a placeholder score
-        return rand(20, 80);
-    }
-
-    private function calculateLeadSourceScore(Contact $contact, array $config): float
-    {
-        $source = strtolower($contact->source ?? '');
-        return $config['source_scores'][$source] ?? 30;
-    }
-
-    private function calculateMLScore(Contact $contact, ScoringFactor $factor): float
-    {
-        // Placeholder for ML model scoring
-        return rand(40, 90);
-    }
-
-    private function calculateAPIScore(Contact $contact, ScoringFactor $factor): float
-    {
-        // Placeholder for external API scoring
-        return rand(30, 85);
-    }
-
-    private function scoreToGrade(int $score): string
-    {
-        return match (true) {
-            $score >= 90 => 'A',
-            $score >= 80 => 'B',
-            $score >= 70 => 'C',
-            $score >= 60 => 'D',
-            default => 'F'
-        };
-    }
-
-    private function scoreToProbability(int $score): float
-    {
-        return round($score / 100, 4);
-    }
-
-    private function generateFactorExplanation(ScoringFactor $factor, float $score): string
-    {
-        $level = match (true) {
-            $score >= 80 => 'excellent',
-            $score >= 60 => 'good',
-            $score >= 40 => 'fair',
-            default => 'poor'
-        };
-
-        return "{$factor->display_name} shows {$level} indicators (score: {$score}).";
     }
 
     /**
@@ -535,6 +374,38 @@ class AiService
             'google' => $this->makeGoogleAiRequest($config, $prompt),
             default => null
         };
+    }
+
+    /**
+     * Generate text using AI
+     */
+    public function generateText(UserAiConfiguration $config, string $prompt): ?array
+    {
+        try {
+            $provider = $config->aiProvider;
+            
+            $response = match($provider->slug) {
+                'openai' => $this->makeOpenAiRequest($config, $prompt),
+                'anthropic' => $this->makeAnthropicRequest($config, $prompt),
+                'google' => $this->makeGoogleAiRequest($config, $prompt),
+                default => throw new \Exception('Provider not supported for text generation')
+            };
+
+            if ($response !== null) {
+                return [
+                    'content' => is_string($response) ? $response : json_encode($response),
+                    'provider' => $provider->slug,
+                    'model' => $config->getDefaultModel('general')
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::error('AI text generation failed', [
+                'provider' => $config->aiProvider->slug,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        return null;
     }
 
     /**

@@ -177,29 +177,137 @@ class TranscriptionService
     }
 
     /**
-     * Fallback Whisper transcription (using local or external Whisper)
+     * Fallback Whisper transcription (using local Whisper installation)
      */
     private function transcribeWithWhisper(string $audioContent): ?array
     {
-        // This could be implemented to use a local Whisper installation
-        // or an external Whisper API service
-        
         try {
-            // For now, we'll use a basic text extraction approach
-            // In a real implementation, you would integrate with Whisper directly
+            // Check if local Whisper is available
+            $whisperPath = config('services.whisper.path', '/usr/local/bin/whisper');
+            $modelSize = config('services.whisper.model', 'base');
             
+            if (!file_exists($whisperPath)) {
+                Log::warning('Local Whisper not found at: ' . $whisperPath);
+                return $this->transcribeWithWhisperApi($audioContent);
+            }
+
+            // Save audio to temporary file
+            $tempFile = $this->saveTemporaryAudio($audioContent);
+            
+            if (!$tempFile) {
+                return null;
+            }
+
+            // Run Whisper CLI
+            $outputDir = sys_get_temp_dir();
+            $command = sprintf(
+                '%s %s --model %s --output_format json --output_dir %s',
+                escapeshellarg($whisperPath),
+                escapeshellarg($tempFile),
+                escapeshellarg($modelSize),
+                escapeshellarg($outputDir)
+            );
+
+            exec($command, $output, $returnCode);
+
+            if ($returnCode !== 0) {
+                Log::error('Whisper CLI failed', [
+                    'return_code' => $returnCode,
+                    'output' => implode("\n", $output),
+                ]);
+                return null;
+            }
+
+            // Read JSON output
+            $jsonFile = $outputDir . '/' . pathinfo($tempFile, PATHINFO_FILENAME) . '.json';
+            
+            if (!file_exists($jsonFile)) {
+                Log::error('Whisper output file not found', ['expected' => $jsonFile]);
+                return null;
+            }
+
+            $result = json_decode(file_get_contents($jsonFile), true);
+            
+            // Clean up temporary files
+            unlink($tempFile);
+            unlink($jsonFile);
+
             return [
-                'text' => '[Transcription not available - Whisper integration pending]',
-                'segments' => [],
-                'language' => 'en',
+                'text' => $result['text'] ?? '',
+                'segments' => $result['segments'] ?? [],
+                'language' => $result['language'] ?? 'en',
                 'provider' => 'whisper_local',
-                'confidence' => 0.0,
+                'confidence' => $this->calculateWhisperConfidence($result['segments'] ?? []),
             ];
 
         } catch (\Exception $e) {
             Log::error('Whisper transcription exception', ['error' => $e->getMessage()]);
             return null;
         }
+    }
+
+    /**
+     * Transcribe using external Whisper API (fallback)
+     */
+    private function transcribeWithWhisperApi(string $audioContent): ?array
+    {
+        try {
+            $whisperApiUrl = config('services.whisper.api_url');
+            
+            if (!$whisperApiUrl) {
+                Log::warning('Whisper API URL not configured');
+                return null;
+            }
+
+            $response = Http::attach(
+                'file', $audioContent, 'recording.wav'
+            )->post($whisperApiUrl . '/transcribe', [
+                'model' => 'base',
+                'language' => 'en',
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                return [
+                    'text' => $data['text'] ?? '',
+                    'segments' => $data['segments'] ?? [],
+                    'language' => $data['language'] ?? 'en',
+                    'provider' => 'whisper_api',
+                    'confidence' => $this->calculateWhisperConfidence($data['segments'] ?? []),
+                ];
+            }
+
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error('Whisper API transcription exception', ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    /**
+     * Calculate confidence from Whisper segments
+     */
+    private function calculateWhisperConfidence(array $segments): float
+    {
+        if (empty($segments)) {
+            return 0.0;
+        }
+
+        $totalConfidence = 0.0;
+        $count = 0;
+
+        foreach ($segments as $segment) {
+            if (isset($segment['avg_logprob'])) {
+                // Convert log probability to confidence (0-1 scale)
+                $confidence = exp($segment['avg_logprob']);
+                $totalConfidence += $confidence;
+                $count++;
+            }
+        }
+
+        return $count > 0 ? round($totalConfidence / $count, 4) : 0.0;
     }
 
     /**
@@ -271,22 +379,65 @@ class TranscriptionService
      */
     private function transcribeWithAzure(string $audioContent, UserAiConfiguration $config): ?array
     {
-        // Azure Speech Services implementation
-        // This would be similar to the other providers but using Azure's API
-        
         try {
-            // Placeholder for Azure implementation
-            return [
-                'text' => '[Azure transcription not implemented]',
-                'segments' => [],
-                'language' => 'en',
-                'provider' => 'azure_speech',
-                'confidence' => 0.0,
-            ];
+            $apiKey = $config->getCredential('api_key');
+            $region = $config->getCredential('region') ?? 'eastus';
+            
+            // Save audio to temporary file
+            $tempFile = $this->saveTemporaryAudio($audioContent);
+            
+            if (!$tempFile) {
+                return null;
+            }
+
+            // Azure Speech-to-Text API endpoint
+            $endpoint = "https://{$region}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1";
+            
+            $response = Http::withHeaders([
+                'Ocp-Apim-Subscription-Key' => $apiKey,
+                'Content-Type' => 'audio/wav',
+            ])->withBody(
+                file_get_contents($tempFile),
+                'audio/wav'
+            )->post($endpoint, [
+                'language' => 'en-US',
+                'format' => 'detailed',
+                'profanity' => 'masked',
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                // Azure returns NBest results
+                $bestResult = $data['NBest'][0] ?? null;
+                
+                if (!$bestResult) {
+                    return null;
+                }
+
+                return [
+                    'text' => $bestResult['Display'] ?? $bestResult['Lexical'] ?? '',
+                    'segments' => $bestResult['Words'] ?? [],
+                    'language' => $data['RecognitionStatus'] === 'Success' ? 'en' : 'unknown',
+                    'provider' => 'azure_speech',
+                    'confidence' => $bestResult['Confidence'] ?? 0.0,
+                ];
+            }
+
+            Log::error('Azure transcription failed', [
+                'status' => $response->status(),
+                'response' => $response->body(),
+            ]);
+
+            return null;
 
         } catch (\Exception $e) {
             Log::error('Azure transcription exception', ['error' => $e->getMessage()]);
             return null;
+        } finally {
+            if (isset($tempFile) && file_exists($tempFile)) {
+                unlink($tempFile);
+            }
         }
     }
 

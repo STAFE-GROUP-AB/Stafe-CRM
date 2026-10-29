@@ -391,6 +391,108 @@
                     </div>
                 @endif
             </div>
+
+            <!-- Sales Playbooks Section -->
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Sales Playbooks') }}</h3>
+                        <x-button wire:click="openPlaybookModal" class="bg-{{ $primaryColor }}-600 hover:bg-{{ $primaryColor }}-700">
+                            <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {{ __('Start Playbook') }}
+                        </x-button>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    @if($selectedDeal->activePlaybookExecutions && $selectedDeal->activePlaybookExecutions->count() > 0)
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ __('Active Playbooks') }}</h4>
+                            <div class="space-y-3">
+                                @foreach($selectedDeal->activePlaybookExecutions as $execution)
+                                    <div class="flex items-center justify-between p-4 bg-{{ $primaryColor }}-50 dark:bg-{{ $primaryColor }}-900/20 border border-{{ $primaryColor }}-200 dark:border-{{ $primaryColor }}-800 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="h-10 w-10 rounded-full bg-{{ $primaryColor }}-100 dark:bg-{{ $primaryColor }}-900 flex items-center justify-center mr-4">
+                                                <svg class="h-5 w-5 text-{{ $primaryColor }}-600 dark:text-{{ $primaryColor }}-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $execution->playbook->title }}</p>
+                                                <div class="flex items-center mt-1">
+                                                    <div class="w-32 h-2 bg-gray-200 dark:bg-gray-700 rounded-full mr-2">
+                                                        <div class="h-full bg-{{ $primaryColor }}-500 rounded-full" style="width: {{ $execution->getProgressPercentage() }}%"></div>
+                                                    </div>
+                                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ $execution->getProgressPercentage() }}%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button wire:click="continuePlaybookExecution({{ $execution->id }})" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-{{ $primaryColor }}-700 dark:text-{{ $primaryColor }}-300 hover:text-{{ $primaryColor }}-900 dark:hover:text-{{ $primaryColor }}-100">
+                                            {{ __('Continue') }}
+                                            <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($selectedDeal->completedPlaybookExecutions && $selectedDeal->completedPlaybookExecutions->count() > 0)
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ __('Completed Playbooks') }}</h4>
+                            <div class="space-y-2">
+                                @foreach($selectedDeal->completedPlaybookExecutions->take(5) as $execution)
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3">
+                                                <svg class="h-4 w-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $execution->playbook->title }}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    {{ __('Completed') }} {{ $execution->completed_at->diffForHumans() }}
+                                                    @if($execution->outcome)
+                                                        <span class="mx-1">-</span>
+                                                        <span class="@if($execution->outcome === 'successful') text-green-600 @elseif($execution->outcome === 'partial') text-yellow-600 @else text-red-600 @endif">
+                                                            {{ ucfirst($execution->outcome) }}
+                                                        </span>
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                        @if($execution->rating)
+                                            <div class="flex items-center">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <svg class="h-4 w-4 {{ $execution->rating >= $i ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                @endfor
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if((!$selectedDeal->activePlaybookExecutions || $selectedDeal->activePlaybookExecutions->count() === 0) && (!$selectedDeal->completedPlaybookExecutions || $selectedDeal->completedPlaybookExecutions->count() === 0))
+                        <div class="text-center py-6">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ __('No playbooks have been run for this deal yet.') }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">{{ __('Start a playbook to guide your sales process.') }}</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     @endif
 
@@ -438,4 +540,56 @@
             </x-danger-button>
         </x-slot>
     </x-confirmation-modal>
+
+    <!-- Start Playbook Modal -->
+    <x-dialog-modal wire:model="showPlaybookModal">
+        <x-slot name="title">
+            {{ __('Start a Sales Playbook') }}
+        </x-slot>
+
+        <x-slot name="content">
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                {{ __('Select a playbook to guide your sales process for this deal.') }}
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <x-label for="selectedPlaybookId" value="{{ __('Select Playbook') }}" />
+                    <select wire:model="selectedPlaybookId" id="selectedPlaybookId" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-{{ $primaryColor }}-500 focus:ring-{{ $primaryColor }}-500">
+                        <option value="">{{ __('Choose a playbook...') }}</option>
+                        @foreach($playbooks as $playbook)
+                            <option value="{{ $playbook->id }}">
+                                {{ $playbook->title }}
+                                ({{ ucfirst(str_replace('_', ' ', $playbook->type)) }})
+                                @if($playbook->estimated_duration) - {{ $playbook->estimated_duration }} @endif
+                            </option>
+                        @endforeach
+                    </select>
+                    <x-input-error for="selectedPlaybookId" class="mt-2" />
+                </div>
+
+                @if($playbooks->isEmpty())
+                    <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                        <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                            {{ __('No published playbooks available.') }}
+                            <a href="{{ route('sales-enablement.playbooks') }}" class="underline">{{ __('Create one') }}</a>
+                        </p>
+                    </div>
+                @endif
+            </div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('showPlaybookModal', false)">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+
+            <x-button wire:click="startPlaybook" class="ms-3 bg-{{ $primaryColor }}-600 hover:bg-{{ $primaryColor }}-700" :disabled="!$playbooks->count()">
+                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                </svg>
+                {{ __('Start Playbook') }}
+            </x-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>

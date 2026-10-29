@@ -2,10 +2,11 @@
 
 namespace App\Livewire;
 
-use App\Models\SalesPlaybook;
-use App\Models\PlaybookExecution;
-use App\Models\Deal;
 use App\Models\Contact;
+use App\Models\Deal;
+use App\Models\PlaybookExecution;
+use App\Models\SalesPlaybook;
+use App\Services\PlaybookExecutionService;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,31 +14,54 @@ class SalesPlaybooksManager extends Component
 {
     use WithPagination;
 
+    protected PlaybookExecutionService $executionService;
+
+    public function boot(PlaybookExecutionService $executionService): void
+    {
+        $this->executionService = $executionService;
+    }
+
     public $showCreateModal = false;
+
     public $showExecutionModal = false;
+
     public $editingPlaybook = null;
+
     public $executingPlaybook = null;
+
     public $currentExecution = null;
-    
+
     // Form fields
     public $title = '';
+
     public $description = '';
+
     public $type = 'discovery';
+
     public $difficulty_level = 'beginner';
+
     public $overview = '';
+
     public $objectives = [''];
+
     public $prerequisites = [''];
+
     public $estimated_duration = '';
+
     public $status = 'draft';
-    
+
     // Execution fields
     public $execution_deal_id = '';
+
     public $execution_contact_id = '';
-    
+
     // Search and filters
     public $search = '';
+
     public $typeFilter = '';
+
     public $difficultyFilter = '';
+
     public $statusFilter = '';
 
     public function render()
@@ -45,9 +69,9 @@ class SalesPlaybooksManager extends Component
         $playbooks = SalesPlaybook::with(['creator', 'steps'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%')
-                      ->orWhere('overview', 'like', '%' . $this->search . '%');
+                    $q->where('title', 'like', '%'.$this->search.'%')
+                        ->orWhere('description', 'like', '%'.$this->search.'%')
+                        ->orWhere('overview', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->typeFilter, function ($query) {
@@ -118,11 +142,15 @@ class SalesPlaybooksManager extends Component
         $deal = $this->execution_deal_id ? Deal::find($this->execution_deal_id) : null;
         $contact = $this->execution_contact_id ? Contact::find($this->execution_contact_id) : null;
 
-        $execution = $this->executingPlaybook->startExecution(auth()->user(), $deal, $contact);
-        
+        $execution = $this->executionService->startExecution(
+            $this->executingPlaybook,
+            auth()->user(),
+            $deal,
+            $contact
+        );
+
         $this->showExecutionModal = false;
-        
-        // Redirect to playbook execution page
+
         return redirect()->route('sales-enablement.playbook-execution', $execution->id);
     }
 
@@ -178,7 +206,7 @@ class SalesPlaybooksManager extends Component
     public function duplicatePlaybook(SalesPlaybook $playbook)
     {
         $newPlaybook = $playbook->replicate();
-        $newPlaybook->title = $playbook->title . ' (Copy)';
+        $newPlaybook->title = $playbook->title.' (Copy)';
         $newPlaybook->status = 'draft';
         $newPlaybook->usage_count = 0;
         $newPlaybook->success_rate = 0;

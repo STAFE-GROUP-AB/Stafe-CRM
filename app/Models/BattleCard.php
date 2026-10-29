@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
@@ -80,6 +81,11 @@ class BattleCard extends Model
         return $this->morphMany(Note::class, 'noteable');
     }
 
+    public function views(): HasMany
+    {
+        return $this->hasMany(BattleCardView::class);
+    }
+
     // Status helpers
     public function isDraft(): bool
     {
@@ -129,21 +135,45 @@ class BattleCard extends Model
     }
 
     // Analytics methods
-    public function recordView(User $user): void
+    public function recordView(User $user, ?Deal $deal = null, string $context = 'general_view'): void
     {
         $this->increment('view_count');
-        $this->update(['last_updated_at' => now()]);
+
+        // Create detailed view record
+        BattleCardView::recordView($this, $user, $deal, $context);
 
         $this->activityLogs()->create([
             'action' => 'viewed',
             'description' => "Battle card viewed by {$user->name}",
             'user_id' => $user->id,
+            'properties' => $deal ? ['deal_id' => $deal->id, 'deal_name' => $deal->name] : [],
+        ]);
+    }
+
+    public function recordShare(User $user, string $sharedVia, ?Deal $deal = null): void
+    {
+        $this->increment('usage_count');
+
+        // Create detailed share record
+        BattleCardView::recordShare($this, $user, $sharedVia, $deal);
+
+        $this->activityLogs()->create([
+            'action' => 'shared',
+            'description' => "Battle card shared by {$user->name} via {$sharedVia}",
+            'user_id' => $user->id,
+            'properties' => [
+                'shared_via' => $sharedVia,
+                'deal_id' => $deal?->id,
+            ],
         ]);
     }
 
     public function recordUsage(User $user, Deal $deal): void
     {
         $this->increment('usage_count');
+
+        // Create detailed view record with deal context
+        BattleCardView::recordView($this, $user, $deal, 'deal_context');
 
         $this->activityLogs()->create([
             'action' => 'used_in_deal',
@@ -154,6 +184,30 @@ class BattleCard extends Model
                 'deal_name' => $deal->name,
             ],
         ]);
+    }
+
+    /**
+     * Get effectiveness statistics for this battle card
+     */
+    public function getEffectiveness(): array
+    {
+        return BattleCardView::calculateEffectiveness($this);
+    }
+
+    /**
+     * Get last viewed date
+     */
+    public function getLastViewedAt(): ?\Illuminate\Support\Carbon
+    {
+        return $this->views()->latest('viewed_at')->value('viewed_at');
+    }
+
+    /**
+     * Get share count
+     */
+    public function getShareCount(): int
+    {
+        return $this->views()->where('was_shared', true)->count();
     }
 
     // Win rate calculation

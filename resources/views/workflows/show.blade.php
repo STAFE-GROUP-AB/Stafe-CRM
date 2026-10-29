@@ -4,14 +4,20 @@
 <div class="container mx-auto px-4 py-8">
     <div class="mb-6">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-gray-900">{{ $workflow->name }}</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $workflow->name }}</h1>
             <div class="flex space-x-2">
-                <a href="{{ route('workflows.edit', $workflow) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                    Edit Workflow
+                <a href="{{ route('workflows.builder.edit', $workflow) }}" class="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 transition-colors duration-200 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                    </svg>
+                    Visual Builder
+                </a>
+                <a href="{{ route('workflows.edit', $workflow) }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200">
+                    Edit Settings
                 </a>
                 <form action="{{ route('workflows.execute', $workflow) }}" method="POST" class="inline">
                     @csrf
-                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 transition-colors duration-200">
                         Execute Now
                     </button>
                 </form>

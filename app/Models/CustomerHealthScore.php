@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\CustomerHealthService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomerHealthScore extends Model
 {
@@ -13,11 +15,15 @@ class CustomerHealthScore extends Model
     protected $fillable = [
         'contact_id',
         'overall_score',
+        'previous_score',
         'score_breakdown',
         'health_status',
+        'trend',
+        'trend_percentage',
         'risk_factors',
         'improvement_suggestions',
-        'last_calculated_at'
+        'last_calculated_at',
+        'alert_sent_at',
     ];
 
     protected $casts = [
@@ -25,7 +31,10 @@ class CustomerHealthScore extends Model
         'risk_factors' => 'array',
         'improvement_suggestions' => 'array',
         'overall_score' => 'decimal:2',
-        'last_calculated_at' => 'datetime'
+        'previous_score' => 'decimal:2',
+        'trend_percentage' => 'decimal:2',
+        'last_calculated_at' => 'datetime',
+        'alert_sent_at' => 'datetime',
     ];
 
     /**
@@ -34,6 +43,14 @@ class CustomerHealthScore extends Model
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    /**
+     * Get the score history for this contact.
+     */
+    public function history(): HasMany
+    {
+        return $this->hasMany(CustomerHealthScoreHistory::class, 'contact_id', 'contact_id');
     }
 
     /**
@@ -53,16 +70,64 @@ class CustomerHealthScore extends Model
     }
 
     /**
+     * Scope for critical customers only.
+     */
+    public function scopeCritical($query)
+    {
+        return $query->where('health_status', 'critical');
+    }
+
+    /**
+     * Scope for declining scores.
+     */
+    public function scopeDeclining($query)
+    {
+        return $query->where('trend', 'declining');
+    }
+
+    /**
+     * Scope for improving scores.
+     */
+    public function scopeImproving($query)
+    {
+        return $query->where('trend', 'improving');
+    }
+
+    /**
      * Get the health status color for UI display.
      */
     public function getHealthStatusColorAttribute(): string
     {
-        return match($this->health_status) {
+        return match ($this->health_status) {
             'excellent' => 'green',
             'good' => 'blue',
             'at_risk' => 'yellow',
             'critical' => 'red',
             default => 'gray'
+        };
+    }
+
+    /**
+     * Get the trend color for UI display.
+     */
+    public function getTrendColorAttribute(): string
+    {
+        return match ($this->trend) {
+            'improving' => 'green',
+            'declining' => 'red',
+            default => 'gray'
+        };
+    }
+
+    /**
+     * Get the trend icon for UI display.
+     */
+    public function getTrendIconAttribute(): string
+    {
+        return match ($this->trend) {
+            'improving' => 'arrow-up',
+            'declining' => 'arrow-down',
+            default => 'minus'
         };
     }
 
@@ -75,113 +140,135 @@ class CustomerHealthScore extends Model
     }
 
     /**
-     * Check if the score needs updating.
+     * Get formatted score change.
+     */
+    public function getFormattedScoreChangeAttribute(): string
+    {
+        if ($this->previous_score === null) {
+            return '-';
+        }
+
+        $change = $this->overall_score - $this->previous_score;
+        $prefix = $change >= 0 ? '+' : '';
+
+        return "{$prefix}" . round($change, 1);
+    }
+
+    /**
+     * Check if the score needs updating (older than 24 hours).
      */
     public function needsUpdate(): bool
     {
+        if (!$this->last_calculated_at) {
+            return true;
+        }
+
         return $this->last_calculated_at->lt(now()->subDays(1));
     }
 
     /**
-     * Calculate and update health score.
+     * Calculate and update health score using the CustomerHealthService.
      */
-    public function recalculate(): void
+    public function recalculate(string $trigger = 'manual'): self
     {
-        // This would typically integrate with AI/ML services
-        $factors = $this->calculateFactors();
-        $overallScore = $this->calculateOverallScore($factors);
-        $status = $this->determineHealthStatus($overallScore);
+        $service = app(CustomerHealthService::class);
 
-        $this->update([
-            'overall_score' => $overallScore,
-            'score_breakdown' => $factors,
-            'health_status' => $status,
-            'risk_factors' => $this->identifyRiskFactors($factors),
-            'improvement_suggestions' => $this->generateSuggestions($factors),
-            'last_calculated_at' => now()
-        ]);
+        return $service->calculateForContact($this->contact, $trigger);
     }
 
     /**
-     * Calculate individual health factors.
+     * Get the highest risk factor.
      */
-    private function calculateFactors(): array
+    public function getHighestRiskAttribute(): ?array
     {
-        // Simplified calculation - in real implementation, this would use ML models
-        return [
-            'engagement' => rand(60, 100),
-            'support_satisfaction' => rand(70, 100),
-            'product_usage' => rand(50, 100),
-            'payment_history' => rand(80, 100),
-            'communication_frequency' => rand(40, 100)
+        if (empty($this->risk_factors)) {
+            return null;
+        }
+
+        return collect($this->risk_factors)
+            ->sortBy('score')
+            ->first();
+    }
+
+    /**
+     * Get the top improvement suggestion.
+     */
+    public function getTopSuggestionAttribute(): ?array
+    {
+        if (empty($this->improvement_suggestions)) {
+            return null;
+        }
+
+        return collect($this->improvement_suggestions)
+            ->first();
+    }
+
+    /**
+     * Check if the customer is in a critical state.
+     */
+    public function isCritical(): bool
+    {
+        return $this->health_status === 'critical';
+    }
+
+    /**
+     * Check if the customer is at risk.
+     */
+    public function isAtRisk(): bool
+    {
+        return in_array($this->health_status, ['at_risk', 'critical']);
+    }
+
+    /**
+     * Check if the customer is healthy.
+     */
+    public function isHealthy(): bool
+    {
+        return in_array($this->health_status, ['excellent', 'good']);
+    }
+
+    /**
+     * Get the score breakdown as a formatted array for display.
+     */
+    public function getFormattedBreakdownAttribute(): array
+    {
+        $labels = [
+            'engagement' => 'Engagement',
+            'support_satisfaction' => 'Support Satisfaction',
+            'product_usage' => 'Product Usage',
+            'payment_history' => 'Payment History',
+            'communication_frequency' => 'Communication',
+            'nps_csat' => 'NPS/CSAT',
+            'deal_activity' => 'Deal Activity',
+            'recency' => 'Recency',
         ];
+
+        $breakdown = [];
+        foreach ($this->score_breakdown ?? [] as $factor => $score) {
+            $breakdown[] = [
+                'factor' => $factor,
+                'label' => $labels[$factor] ?? ucfirst(str_replace('_', ' ', $factor)),
+                'score' => round($score, 1),
+                'color' => $this->getFactorColor($score),
+            ];
+        }
+
+        return $breakdown;
     }
 
     /**
-     * Calculate overall score from factors.
+     * Get color based on factor score.
      */
-    private function calculateOverallScore(array $factors): float
+    protected function getFactorColor(float $score): string
     {
-        $weights = [
-            'engagement' => 0.3,
-            'support_satisfaction' => 0.2,
-            'product_usage' => 0.25,
-            'payment_history' => 0.15,
-            'communication_frequency' => 0.1
-        ];
-
-        $weightedSum = 0;
-        foreach ($factors as $factor => $score) {
-            $weightedSum += $score * ($weights[$factor] ?? 0.1);
+        if ($score >= 70) {
+            return 'green';
         }
 
-        return round($weightedSum, 2);
-    }
-
-    /**
-     * Determine health status based on score.
-     */
-    private function determineHealthStatus(float $score): string
-    {
-        if ($score >= 85) return 'excellent';
-        if ($score >= 70) return 'good';
-        if ($score >= 50) return 'at_risk';
-        return 'critical';
-    }
-
-    /**
-     * Identify risk factors.
-     */
-    private function identifyRiskFactors(array $factors): array
-    {
-        $risks = [];
-        foreach ($factors as $factor => $score) {
-            if ($score < 60) {
-                $risks[] = ucfirst(str_replace('_', ' ', $factor));
-            }
-        }
-        return $risks;
-    }
-
-    /**
-     * Generate improvement suggestions.
-     */
-    private function generateSuggestions(array $factors): array
-    {
-        $suggestions = [];
-        
-        if ($factors['engagement'] < 70) {
-            $suggestions[] = 'Increase engagement through personalized communication';
-        }
-        
-        if ($factors['support_satisfaction'] < 80) {
-            $suggestions[] = 'Follow up on recent support interactions';
-        }
-        
-        if ($factors['product_usage'] < 60) {
-            $suggestions[] = 'Provide product training or onboarding assistance';
+        if ($score >= 50) {
+            return 'yellow';
         }
 
-        return $suggestions;
+        return 'red';
     }
 }

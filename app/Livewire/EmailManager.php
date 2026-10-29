@@ -7,9 +7,11 @@ use App\Models\EmailTemplate;
 use App\Models\Contact;
 use App\Models\Company;
 use App\Models\Deal;
+use App\Mail\GenericEmail;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class EmailManager extends Component
 {
@@ -70,31 +72,48 @@ class EmailManager extends Component
         $this->entityId = null;
     }
 
-    public function sendEmail()
+    public function sendEmail(): void
     {
         $this->validate();
 
         try {
-            // Create email record
             $email = Email::create([
                 'to' => $this->to,
                 'subject' => $this->subject,
                 'body' => $this->body,
                 'user_id' => auth()->id(),
-                'status' => 'sent',
-                'sent_at' => now(),
+                'status' => 'pending',
                 'emailable_type' => $this->entityType,
                 'emailable_id' => $this->entityId,
             ]);
 
-            // Send the actual email
-            // Note: This would integrate with Laravel's mail system
-            // Mail::to($this->to)->send(new EmailMailable($email));
+            Mail::to($this->to)->send(new GenericEmail($email));
+
+            $email->update([
+                'status' => 'sent',
+                'sent_at' => now(),
+            ]);
+
+            Log::info('Email sent successfully', [
+                'email_id' => $email->id,
+                'to' => $this->to,
+                'subject' => $this->subject,
+            ]);
 
             session()->flash('message', 'Email sent successfully!');
             $this->hideComposer();
-            
+
         } catch (\Exception $e) {
+            Log::error('Failed to send email', [
+                'to' => $this->to,
+                'subject' => $this->subject,
+                'error' => $e->getMessage(),
+            ]);
+
+            if (isset($email)) {
+                $email->update(['status' => 'failed']);
+            }
+
             session()->flash('error', 'Failed to send email: ' . $e->getMessage());
         }
     }
